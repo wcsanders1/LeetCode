@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpGameII", "JumpGameII\JumpGameII.csproj", "{F45071C1-4313-4203-AA9A-762107315178}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F45071C1-4313-4203-AA9A-762107315178}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F45071C1-4313-4203-AA9A-762107315178}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F45071C1-4313-4203-AA9A-762107315178}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F45071C1-4313-4203-AA9A-762107315178}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {20CE399B-1ECC-4996-BA7D-864901568DCE}
+	EndGlobalSection
+EndGlobal
