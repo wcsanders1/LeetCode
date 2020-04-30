@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniquePaths", "UniquePaths\UniquePaths.csproj", "{4C44F8E6-C078-4A14-924B-3773FDA856D3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4C44F8E6-C078-4A14-924B-3773FDA856D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C44F8E6-C078-4A14-924B-3773FDA856D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C44F8E6-C078-4A14-924B-3773FDA856D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C44F8E6-C078-4A14-924B-3773FDA856D3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3738C7F2-D3BA-483A-A4E6-0E6A6202C916}
+	EndGlobalSection
+EndGlobal
