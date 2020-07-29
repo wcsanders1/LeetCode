@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeleteOperationForTwoStrings", "DeleteOperationForTwoStrings\DeleteOperationForTwoStrings.csproj", "{6A585145-F75F-4AEE-8614-1692206D3CDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A585145-F75F-4AEE-8614-1692206D3CDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A585145-F75F-4AEE-8614-1692206D3CDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A585145-F75F-4AEE-8614-1692206D3CDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A585145-F75F-4AEE-8614-1692206D3CDA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6B1AB4E6-DB27-4086-A31B-8165E5CADC41}
+	EndGlobalSection
+EndGlobal
