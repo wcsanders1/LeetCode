@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30330.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindAllAnagramsInAString", "FindAllAnagramsInAString\FindAllAnagramsInAString.csproj", "{951733C6-DB81-4EEA-898A-F27AA46DDCC0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{951733C6-DB81-4EEA-898A-F27AA46DDCC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{951733C6-DB81-4EEA-898A-F27AA46DDCC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{951733C6-DB81-4EEA-898A-F27AA46DDCC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{951733C6-DB81-4EEA-898A-F27AA46DDCC0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0E4E4715-6E7D-49C4-AED0-2799D9E8CB33}
+	EndGlobalSection
+EndGlobal
