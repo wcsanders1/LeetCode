@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30330.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeysAndRooms", "KeysAndRooms\KeysAndRooms.csproj", "{E1F6DAD2-1867-4EB2-A898-600B1D5A44A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1F6DAD2-1867-4EB2-A898-600B1D5A44A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1F6DAD2-1867-4EB2-A898-600B1D5A44A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1F6DAD2-1867-4EB2-A898-600B1D5A44A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1F6DAD2-1867-4EB2-A898-600B1D5A44A3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BE7FD7C8-5990-4818-9E93-2996742F2E1E}
+	EndGlobalSection
+EndGlobal
