@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30517.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CnstrctBiTreePreInOrder", "CnstrctBiTreePreInOrder\CnstrctBiTreePreInOrder.csproj", "{F7188FA9-312D-4C89-BCA5-AD663130E5C3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7188FA9-312D-4C89-BCA5-AD663130E5C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7188FA9-312D-4C89-BCA5-AD663130E5C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7188FA9-312D-4C89-BCA5-AD663130E5C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7188FA9-312D-4C89-BCA5-AD663130E5C3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A0AEA318-47EA-4296-A16C-75AC607CFBC3}
+	EndGlobalSection
+EndGlobal
