@@ -39,12 +39,10 @@ public:
         vector<int> newPalindromes;
         for (int p : palindromes)
         {
-            if (p == exclude)
+            if (p != exclude)
             {
-                continue;
+                newPalindromes.push_back(p);
             }
-
-            newPalindromes.push_back(p);
         }
 
         return newPalindromes;
@@ -55,12 +53,10 @@ public:
         vector<int> newEmpties;
         for (int e : empties)
         {
-            if (e == exclude)
+            if (e != exclude)
             {
-                continue;
+                newEmpties.push_back(e);
             }
-
-            newEmpties.push_back(e);
         }
 
         return newEmpties;
@@ -76,12 +72,10 @@ public:
         vector<int> newFullPalindromes;
         for (int p : fullPalindromes)
         {
-            if (p == exclude)
+            if (p != exclude)
             {
-                continue;
+                newFullPalindromes.push_back(p);
             }
-
-            newFullPalindromes.push_back(p);
         }
 
         return newFullPalindromes;
@@ -97,12 +91,10 @@ public:
         vector<int> newPartialPalindromes;
         for (int p : partialPalindromes)
         {
-            if (p == exclude)
+            if (p != exclude)
             {
-                continue;
+                newPartialPalindromes.push_back(p);
             }
-
-            newPartialPalindromes.push_back(p);
         }
 
         return newPartialPalindromes;
@@ -139,26 +131,28 @@ public:
 
         for (it = words.begin(); it != words.end(); it++, index++)
         {
-            string word = words[index];
-            if (word.size() == 0)
+            string *word = &(words[index]);
+
+            if (word->size() == 0)
             {
                 trie.AddEmpty(index);
                 continue;
             }
 
-            if (IsPalindrome(word, 0, word.size() - 1))
+            if (IsPalindrome(*word, 0, word->size() - 1))
             {
                 trie.AddFullPalindrome(index);
             }
 
             Trie *child = &trie;
-            for (int i = word.size() - 1; i >= 0; i--)
+            for (int i = word->size() - 1; i >= 0; i--)
             {
-                child->TryAddChild(word[i]);
-                Trie *newChild = child->TryGetChild(word[i]);
+                char c = (*word)[i];
+                child->TryAddChild(c);
+                Trie *newChild = child->TryGetChild(c);
                 child = newChild;
 
-                if (i > 0 && IsPalindrome(word, 0, i - 1))
+                if (i > 0 && IsPalindrome(*word, 0, i - 1))
                 {
                     child->AddPartialPalindrome(index);
                 }
@@ -171,11 +165,11 @@ public:
         for (it = words.begin(); it != words.end(); it++, index++)
         {
             Trie *node = &trie;
-            string word = words[index];
-            int lastIndex = word.size() - 1;
+            string *word = &(words[index]);
+            int lastIndex = word->size() - 1;
             set<int> indeces;
 
-            if (word.size() == 0)
+            if (word->size() == 0)
             {
                 vector<int> fullPalindromes = trie.GetFullPalindromes(index);
                 if (fullPalindromes.size() > 0)
@@ -196,7 +190,7 @@ public:
                 }
             }
 
-            if (IsPalindrome(word, 0, lastIndex))
+            if (IsPalindrome(*word, 0, lastIndex))
             {
                 vector<int> empties = trie.GetEmpties(index);
                 if (empties.size() > 0)
@@ -208,9 +202,9 @@ public:
                 }
             }
 
-            for (int i = 0; i < word.size(); i++)
+            for (int i = 0; i < word->size(); i++)
             {
-                Trie *nextNode = node->TryGetChild(word[i]);
+                Trie *nextNode = node->TryGetChild((*word)[i]);
                 if (nextNode)
                 {
                     if (i == lastIndex)
@@ -230,7 +224,7 @@ public:
                             }
                         }
                     }
-                    else if (IsPalindrome(word, i + 1, lastIndex))
+                    else if (IsPalindrome(*word, i + 1, lastIndex))
                     {
                         vector<int> palindromes = nextNode->GetPalindromes(index);
                         if (palindromes.size() > 0)
@@ -250,7 +244,7 @@ public:
                 }
                 else
                 {
-                    if (IsPalindrome(word, i, lastIndex))
+                    if (IsPalindrome(*word, i, lastIndex))
                     {
                         vector<int> palindromes = node->GetPalindromes(index);
                         if (palindromes.size() > 0)
