@@ -104,53 +104,20 @@ public:
             return result;
         }
 
-        Trie trie;
-        vector<string>::iterator it;
+        Trie *trie = BuildTree(words);
+
         int index = 0;
-
+        vector<string>::iterator it;
         for (it = words.begin(); it != words.end(); it++, index++)
         {
-            string *word = &(words[index]);
-
-            if (word->size() == 0)
-            {
-                trie.AddEmpty(index);
-                continue;
-            }
-
-            if (IsPalindrome(*word, 0, word->size() - 1))
-            {
-                trie.AddFullPalindrome(index);
-            }
-
-            Trie *child = &trie;
-            for (int i = word->size() - 1; i >= 0; i--)
-            {
-                char c = (*word)[i];
-                child->TryAddChild(c);
-                Trie *newChild = child->TryGetChild(c);
-                child = newChild;
-
-                if (i > 0 && IsPalindrome(*word, 0, i - 1))
-                {
-                    child->AddPartialPalindrome(index);
-                }
-            }
-
-            child->AddPalindrome(index);
-        }
-
-        index = 0;
-        for (it = words.begin(); it != words.end(); it++, index++)
-        {
-            Trie *node = &trie;
+            Trie *node = trie;
             string *word = &(words[index]);
             int lastIndex = word->size() - 1;
             set<int> indeces;
 
             if (word->size() == 0)
             {
-                vector<int> *fullPalindromes = trie.GetFullPalindromes(index);
+                vector<int> *fullPalindromes = trie->GetFullPalindromes(index);
                 if (fullPalindromes->size() > 0)
                 {
                     for (int fp : *fullPalindromes)
@@ -159,7 +126,7 @@ public:
                     }
                 }
 
-                vector<int> *empties = trie.GetEmpties(index);
+                vector<int> *empties = trie->GetEmpties(index);
                 if (empties->size() > 0)
                 {
                     for (int e : *empties)
@@ -171,7 +138,7 @@ public:
 
             if (IsPalindrome(*word, 0, lastIndex))
             {
-                vector<int> *empties = trie.GetEmpties(index);
+                vector<int> *empties = trie->GetEmpties(index);
                 if (empties->size() > 0)
                 {
                     for (int e : *empties)
@@ -261,6 +228,48 @@ private:
         }
 
         return IsPalindrome(word, start + 1, end - 1);
+    }
+
+    Trie *BuildTree(vector<string> &words)
+    {
+        Trie *trie = new Trie();
+
+        vector<string>::iterator it;
+        int index = 0;
+
+        for (it = words.begin(); it != words.end(); it++, index++)
+        {
+            string *word = &(words[index]);
+
+            if (word->size() == 0)
+            {
+                trie->AddEmpty(index);
+                continue;
+            }
+
+            if (IsPalindrome(*word, 0, word->size() - 1))
+            {
+                trie->AddFullPalindrome(index);
+            }
+
+            Trie *child = trie;
+            for (int i = word->size() - 1; i >= 0; i--)
+            {
+                char c = (*word)[i];
+                child->TryAddChild(c);
+                Trie *newChild = child->TryGetChild(c);
+                child = newChild;
+
+                if (i > 0 && IsPalindrome(*word, 0, i - 1))
+                {
+                    child->AddPartialPalindrome(index);
+                }
+            }
+
+            child->AddPalindrome(index);
+        }
+
+        return trie;
     }
 };
 
