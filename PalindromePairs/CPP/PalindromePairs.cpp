@@ -34,32 +34,14 @@ public:
         palindromes.push_back(p);
     }
 
-    vector<int> GetPalindromes(int exclude)
+    vector<int> *GetPalindromes(int exclude)
     {
-        vector<int> newPalindromes;
-        for (int p : palindromes)
-        {
-            if (p != exclude)
-            {
-                newPalindromes.push_back(p);
-            }
-        }
-
-        return newPalindromes;
+        return Filter(palindromes, exclude);
     }
 
-    vector<int> GetEmpties(int exclude)
+    vector<int> *GetEmpties(int exclude)
     {
-        vector<int> newEmpties;
-        for (int e : empties)
-        {
-            if (e != exclude)
-            {
-                newEmpties.push_back(e);
-            }
-        }
-
-        return newEmpties;
+        return Filter(empties, exclude);
     }
 
     void AddEmpty(int i)
@@ -67,18 +49,9 @@ public:
         empties.push_back(i);
     }
 
-    vector<int> GetFullPalindromes(int exclude)
+    vector<int> *GetFullPalindromes(int exclude)
     {
-        vector<int> newFullPalindromes;
-        for (int p : fullPalindromes)
-        {
-            if (p != exclude)
-            {
-                newFullPalindromes.push_back(p);
-            }
-        }
-
-        return newFullPalindromes;
+        return Filter(fullPalindromes, exclude);
     }
 
     void AddFullPalindrome(int i)
@@ -86,18 +59,9 @@ public:
         fullPalindromes.push_back(i);
     }
 
-    vector<int> GetPartialPalindromes(int exclude)
+    vector<int> *GetPartialPalindromes(int exclude)
     {
-        vector<int> newPartialPalindromes;
-        for (int p : partialPalindromes)
-        {
-            if (p != exclude)
-            {
-                newPartialPalindromes.push_back(p);
-            }
-        }
-
-        return newPartialPalindromes;
+        return Filter(partialPalindromes, exclude);
     }
 
     void AddPartialPalindrome(int i)
@@ -111,6 +75,21 @@ private:
     vector<int> empties;
     vector<int> fullPalindromes;
     vector<int> partialPalindromes;
+
+    vector<int> *Filter(vector<int> &source, int exclude)
+    {
+        vector<int> *filtered = new vector<int>();
+
+        for (int i : source)
+        {
+            if (i != exclude)
+            {
+                filtered->push_back(i);
+            }
+        }
+
+        return filtered;
+    }
 };
 
 class Solution
@@ -171,19 +150,19 @@ public:
 
             if (word->size() == 0)
             {
-                vector<int> fullPalindromes = trie.GetFullPalindromes(index);
-                if (fullPalindromes.size() > 0)
+                vector<int> *fullPalindromes = trie.GetFullPalindromes(index);
+                if (fullPalindromes->size() > 0)
                 {
-                    for (int fp : fullPalindromes)
+                    for (int fp : *fullPalindromes)
                     {
                         result.push_back(vector<int>{index, fp});
                     }
                 }
 
-                vector<int> empties = trie.GetEmpties(index);
-                if (empties.size() > 0)
+                vector<int> *empties = trie.GetEmpties(index);
+                if (empties->size() > 0)
                 {
-                    for (int e : empties)
+                    for (int e : *empties)
                     {
                         result.push_back(vector<int>{index, e});
                     }
@@ -192,10 +171,10 @@ public:
 
             if (IsPalindrome(*word, 0, lastIndex))
             {
-                vector<int> empties = trie.GetEmpties(index);
-                if (empties.size() > 0)
+                vector<int> *empties = trie.GetEmpties(index);
+                if (empties->size() > 0)
                 {
-                    for (int e : empties)
+                    for (int e : *empties)
                     {
                         result.push_back(vector<int>{index, e});
                     }
@@ -209,12 +188,12 @@ public:
                 {
                     if (i == lastIndex)
                     {
-                        vector<int> palindromes = nextNode->GetPalindromes(index);
-                        vector<int> partials = nextNode->GetPartialPalindromes(index);
-                        palindromes.insert(palindromes.end(), partials.begin(), partials.end());
-                        if (palindromes.size() > 0)
+                        vector<int> *palindromes = nextNode->GetPalindromes(index);
+                        vector<int> *partials = nextNode->GetPartialPalindromes(index);
+                        palindromes->insert(palindromes->end(), partials->begin(), partials->end());
+                        if (palindromes->size() > 0)
                         {
-                            for (int p : palindromes)
+                            for (int p : *palindromes)
                             {
                                 if (!indeces.count(p))
                                 {
@@ -226,10 +205,10 @@ public:
                     }
                     else if (IsPalindrome(*word, i + 1, lastIndex))
                     {
-                        vector<int> palindromes = nextNode->GetPalindromes(index);
-                        if (palindromes.size() > 0)
+                        vector<int> *palindromes = nextNode->GetPalindromes(index);
+                        if (palindromes->size() > 0)
                         {
-                            for (int p : palindromes)
+                            for (int p : *palindromes)
                             {
                                 if (!indeces.count(p))
                                 {
@@ -246,10 +225,10 @@ public:
                 {
                     if (IsPalindrome(*word, i, lastIndex))
                     {
-                        vector<int> palindromes = node->GetPalindromes(index);
-                        if (palindromes.size() > 0)
+                        vector<int> *palindromes = node->GetPalindromes(index);
+                        if (palindromes->size() > 0)
                         {
-                            for (int p : palindromes)
+                            for (int p : *palindromes)
                             {
                                 if (!indeces.count(p))
                                 {
