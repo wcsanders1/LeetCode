@@ -17,13 +17,16 @@ public:
 
     results.push_back(first);
 
+    vector<vector<string>> *palindromes = getPalindromes(first, s, 0, 0);
+    results.insert(end(results), begin(*palindromes), end(*palindromes));
+
     return results;
   }
 
 private:
-  vector<vector<string> *> *getPalindromes(vector<string> &partitions, string s, int vectorStart, int stringStart)
+  vector<vector<string>> *getPalindromes(const vector<string> &partitions, string s, int vectorStart, int stringStart)
   {
-    vector<vector<string> *> *results = new vector<vector<string> *>;
+    vector<vector<string>> *results = new vector<vector<string>>;
     if (stringStart >= s.length())
     {
       return results;
@@ -49,16 +52,15 @@ private:
             newPartition->push_back(string(1, s[k]));
           }
 
-          results->push_back(newPartition);
+          results->push_back(*newPartition);
 
-          vector<vector<string> *> *newResults = getPalindromes(*newPartition, s, i + 1, stringStart + len);
+          vector<vector<string>> *newResults = getPalindromes(*newPartition, s, i + 1, stringStart + len);
 
           results->insert(end(*results), begin(*newResults), end(*newResults));
         }
       }
-
-      return results;
     }
+    return results;
   }
 
   bool isPalindrome(string s)
@@ -77,3 +79,10 @@ private:
     return true;
   }
 };
+
+int main()
+{
+  Solution solution;
+
+  vector<vector<string>> results1 = solution.partition("aab");
+}
