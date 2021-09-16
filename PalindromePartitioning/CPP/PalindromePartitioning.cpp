@@ -9,73 +9,46 @@ public:
   vector<vector<string>> partition(string s)
   {
     vector<vector<string>> results;
-    vector<string> first;
-    for (int i = 0; i < s.length(); i++)
+    if (s.empty())
     {
-      first.push_back(string(1, s[i]));
+      return results;
     }
 
-    results.push_back(first);
-
-    vector<vector<string>> *palindromes = getPalindromes(first, s, 0, 0);
-    results.insert(end(results), begin(*palindromes), end(*palindromes));
+    vector<string> path;
+    dfs(0, s, path, results);
 
     return results;
   }
 
 private:
-  vector<vector<string>> *getPalindromes(const vector<string> &partitions, string s, int vectorStart, int stringStart)
+  void dfs(int index, string &s, vector<string> &path, vector<vector<string>> &results)
   {
-    vector<vector<string>> *results = new vector<vector<string>>;
-    if (stringStart >= s.length())
+    if (index == s.size())
     {
-      return results;
+      results.push_back(path);
+      return;
     }
 
-    for (int i = vectorStart; i < partitions.size(); i++)
+    for (int i = index; i < s.size(); i++)
     {
-      for (int len = 1; len < s.length() - stringStart; len++)
+      if (isPalindrome(s, index, i))
       {
-        string attempt = partitions[i] + s.substr(stringStart, len);
-        if (isPalindrome(attempt))
-        {
-          vector<string> *newPartition = new vector<string>;
-          for (int k = 0; k < i; k++)
-          {
-            newPartition->push_back(partitions[k]);
-          }
-
-          newPartition->push_back(attempt);
-
-          for (int k = stringStart + len; k < s.length(); k++)
-          {
-            newPartition->push_back(string(1, s[k]));
-          }
-
-          results->push_back(*newPartition);
-
-          vector<vector<string>> *newResults = getPalindromes(*newPartition, s, i + 1, stringStart + len);
-
-          results->insert(end(*results), begin(*newResults), end(*newResults));
-        }
+        path.push_back(s.substr(index, i - index + 1));
+        dfs(i + 1, s, path, results);
+        path.pop_back();
       }
     }
-    return results;
   }
 
-  bool isPalindrome(string s)
+  bool isPalindrome(const string &s, int start, int end)
   {
-    int start = 0;
-    int end = s.length() - 1;
-
-    while (start < end)
+    while (start <= end)
     {
       if (s[start++] != s[end--])
       {
         return false;
       }
     }
-
     return true;
   }
 };
