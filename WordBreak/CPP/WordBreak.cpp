@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <unordered_set>
 
 using namespace std;
 
@@ -8,33 +9,38 @@ class Solution
 public:
   bool wordBreak(string s, vector<string> &wordDict)
   {
-    return wordBreak(s, wordDict, 0);
+    unordered_set<string> set(wordDict.begin(), wordDict.end());
+    return wordBreak(s, set, 0);
   }
 
 private:
-  bool wordBreak(string &s, vector<string> &wordDict, int start)
+  bool wordBreak(string &s, unordered_set<string> &wordDict, int start)
   {
-    if (start == s.size())
+    if (wordDict.size() == 0)
     {
-      return true;
+      return false;
     }
 
-    for (string word : wordDict)
-    {
-      for (int i = 0; i < word.size(); i++)
-      {
-        if (i + start >= s.size() || word[i] != s[i + start])
-        {
-          break;
-        }
+    vector<bool> dp(s.size() + 1, false);
+    dp[0] = true;
 
-        if (i == word.size() - 1 && wordBreak(s, wordDict, word.size() + start))
+    for (int i = 1; i <= s.size(); i++)
+    {
+      for (int j = i - 1; j >= 0; j--)
+      {
+        if (dp[j])
         {
-          return true;
+          string word = s.substr(j, i - j);
+          if (wordDict.find(word) != wordDict.end())
+          {
+            dp[i] = true;
+            break;
+          }
         }
       }
     }
-    return false;
+
+    return dp[s.size()];
   }
 };
 
