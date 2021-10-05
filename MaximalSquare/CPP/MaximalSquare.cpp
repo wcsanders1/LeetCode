@@ -30,11 +30,15 @@ public:
         int above = numMatrix[row - 1][column];
         int left = numMatrix[row][column - 1];
         int aboveLeft = numMatrix[row - 1][column - 1];
-        result = max(result, aboveLeft);
-        if (above >= aboveLeft && left >= aboveLeft)
+
+        int least = min(above, min(left, aboveLeft));
+
+        if (current > 0)
         {
-          numMatrix[row][column] = current + aboveLeft;
+          numMatrix[row][column] = current + least;
         }
+
+        result = max(result, numMatrix[row][column]);
       }
     }
 
@@ -53,5 +57,7 @@ int main()
   int result3 = solution.maximalSquare(*new vector<vector<char>>{vector<char>{'1', '1'}, vector<char>{'1', '1'}});
   int result4 = solution.maximalSquare(*new vector<vector<char>>{vector<char>{'1', '1', '1', '1', '1'}, vector<char>{'1', '1', '1', '1', '1'}, vector<char>{'0', '0', '0', '0', '0'}, vector<char>{'1', '1', '1', '1', '1'}, vector<char>{'1', '1', '1', '1', '1'}});
   int result5 = solution.maximalSquare(*new vector<vector<char>>{vector<char>{'1', '1', '1', '1', '0'}, vector<char>{'1', '1', '1', '1', '0'}, vector<char>{'1', '1', '1', '1', '1'}, vector<char>{'1', '1', '1', '1', '1'}, vector<char>{'0', '0', '1', '1', '1'}});
-  int result6 = solution.maximalSquare(*new vector<vector<char>>{vector<char>{'0', '0', '0', '1'}, vector<char>{'1', '1', '0', '1'}, vector<char>{'1', '1', '1', '1'}, vector<char>{'0', '1', '1', '1'}, vector<char>{'0', '1', '1', '1'}});
+  int result6 = solution.maximalSquare(*new vector<vector<char>>{vector<char>{'0', '0', '0', '1'}, vector<char>{'1', '1', '0', '1'}, vector<char>{'1', '1', '1', '1'}, vector<char>{'0', '1', '1', '1'}, vector<char>{'0', '1', '1', '1'}});                                                                                               // 9
+  int result7 = solution.maximalSquare(*new vector<vector<char>>{vector<char>{'1', '0', '1', '1', '0', '1'}, vector<char>{'1', '1', '1', '1', '1', '1'}, vector<char>{'0', '1', '1', '0', '1', '1'}, vector<char>{'1', '1', '1', '0', '1', '0'}, vector<char>{'0', '1', '1', '1', '1', '1'}, vector<char>{'1', '1', '0', '1', '1', '1'}}); // 4
+  int result8 = solution.maximalSquare(*new vector<vector<char>>{vector<char>{'1', '1'}, vector<char>{'1', '1'}, vector<char>{'0', '1'}});                                                                                                                                                                                                 // 4
 }
