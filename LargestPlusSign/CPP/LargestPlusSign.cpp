@@ -21,62 +21,28 @@ public:
     }
 
     int result = 0;
+    vector<vector<int>> left(n, vector<int>(n, 0));
+    vector<vector<int>> right(n, vector<int>(n, 0));
+    vector<vector<int>> up(n, vector<int>(n, 0));
+    vector<vector<int>> down(n, vector<int>(n, 0));
 
-    vector<vector<vector<int>>> dp(n, vector<vector<int>>(n, vector<int>(2, 0)));
+    for (int row = 0; row < n; row++)
+    {
+      for (int column = 0; column < n; column++)
+      {
+        right[row][column] = (column == 0 || numMatrix[row][column] == 0) ? numMatrix[row][column] : numMatrix[row][column] + right[row][column - 1];
+        left[row][(n - 1) - column] = (column == 0 || numMatrix[row][(n - 1) - column] == 0) ? numMatrix[row][(n - 1) - column] : numMatrix[row][(n - 1) - column] + left[row][n - column];
+        down[row][column] = (row == 0 || numMatrix[row][column] == 0) ? numMatrix[row][column] : numMatrix[row][column] + down[row - 1][column];
+        up[(n - 1) - row][column] = (row == 0 || numMatrix[(n - 1) - row][column] == 0) ? numMatrix[(n - 1) - row][column] : numMatrix[(n - 1) - row][column] + up[n - row][column];
+      }
+    }
 
     for (int row = 0; row < numMatrix.size(); row++)
     {
       for (int column = 0; column < numMatrix[row].size(); column++)
       {
-        int num = numMatrix[row][column];
-        result = max(result, num);
-
-        if (row == 0 && column == 0)
-        {
-          dp[row][column][0] = 0;
-          dp[row][column][1] = 0;
-        }
-        else if (row == 0)
-        {
-          dp[row][column][0] = num == 0 ? 0 : dp[row][column - 1][0] + num;
-          dp[row][column][1] = 0;
-        }
-        else if (column == 0)
-        {
-          dp[row][column][0] = 0;
-          dp[row][column][1] = num == 0 ? 0 : dp[row - 1][column][1] + num;
-        }
-        else
-        {
-          dp[row][column][0] = num == 0 ? 0 : dp[row][column - 1][0] + num;
-          dp[row][column][1] = num == 0 ? 0 : dp[row - 1][column][1] + num;
-        }
-      }
-    }
-
-    if (n < 3)
-    {
-      return result;
-    }
-
-    for (int row = 1; row < numMatrix.size(); row++)
-    {
-      for (int column = 1; column < numMatrix[row].size(); column++)
-      {
-        int least = min(dp[row][column][0], dp[row][column][1]);
-        while (least > result)
-        {
-          int advance = least - 1;
-          if (advance + row >= n || advance + column >= n)
-          {
-            least--;
-          }
-          else
-          {
-          }
-        }
-
-        result = max(result, least);
+        int tempResult = min(right[row][column], min(left[row][column], min(up[row][column], down[row][column])));
+        result = max(result, tempResult);
       }
     }
 
