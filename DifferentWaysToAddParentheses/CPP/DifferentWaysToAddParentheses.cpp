@@ -38,7 +38,41 @@ public:
 
     numbers.push_back(stoi(expression.substr(start, length)));
 
+    reduce(numbers, operators, answer);
+
     return answer;
+  }
+
+private:
+  void reduce(vector<int> numbers, vector<char> operators, vector<int> answer, int position = 0)
+  {
+    if (numbers.size() == 2)
+    {
+      answer.push_back(compute(numbers[0], numbers[1], operators[position]));
+      return;
+    }
+
+    for (int outter = 0; outter < numbers.size(); outter++)
+    {
+      vector<int> reducedNumbers;
+
+      for (int inner = outter + 1; inner < numbers.size(); inner++)
+      {
+      }
+    }
+  }
+
+  int compute(int first, int second, char op)
+  {
+    switch (op)
+    {
+    case '*':
+      return first * second;
+    case '-':
+      return first - second;
+    default:
+      return first + second;
+    }
   }
 };
 
