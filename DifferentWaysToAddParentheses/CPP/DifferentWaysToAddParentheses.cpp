@@ -11,68 +11,40 @@ public:
   vector<int> diffWaysToCompute(string expression)
   {
     vector<int> answer;
-    if (expression.empty())
+    for (int i = 0; i < expression.size(); i++)
     {
-      return answer;
+      char current = expression[i];
+      if (current == '+' || current == '-' || current == '*')
+      {
+        vector<int> partOne = diffWaysToCompute(expression.substr(0, i));
+        vector<int> partTwo = diffWaysToCompute(expression.substr(i + 1));
+        for (int num1 : partOne)
+        {
+          for (int num2 : partTwo)
+          {
+            if (current == '+')
+            {
+              answer.push_back(num1 + num2);
+            }
+            else if (current == '-')
+            {
+              answer.push_back(num1 - num2);
+            }
+            else
+            {
+              answer.push_back(num1 * num2);
+            }
+          }
+        }
+      }
     }
 
-    vector<int> numbers;
-    vector<char> operators;
-
-    int start = 0;
-    int length = 1;
-    for (int position = 0; position < expression.size(); position++)
+    if (answer.empty())
     {
-      if (!isdigit(expression[position]))
-      {
-        numbers.push_back(stoi(expression.substr(start, length)));
-        operators.push_back(expression[position]);
-        start = position + 1;
-        length = 1;
-      }
-      else
-      {
-        length++;
-      }
+      answer.push_back(atoi(expression.c_str()));
     }
-
-    numbers.push_back(stoi(expression.substr(start, length)));
-
-    reduce(numbers, operators, answer);
 
     return answer;
-  }
-
-private:
-  void reduce(vector<int> numbers, vector<char> operators, vector<int> answer, int position = 0)
-  {
-    if (numbers.size() == 2)
-    {
-      answer.push_back(compute(numbers[0], numbers[1], operators[position]));
-      return;
-    }
-
-    for (int outter = 0; outter < numbers.size(); outter++)
-    {
-      vector<int> reducedNumbers;
-
-      for (int inner = outter + 1; inner < numbers.size(); inner++)
-      {
-      }
-    }
-  }
-
-  int compute(int first, int second, char op)
-  {
-    switch (op)
-    {
-    case '*':
-      return first * second;
-    case '-':
-      return first - second;
-    default:
-      return first + second;
-    }
   }
 };
 
@@ -80,5 +52,7 @@ int main()
 {
   Solution solution;
 
-  vector<int> result1 = solution.diffWaysToCompute("2*3-4*5");
+  vector<int> result1 = solution.diffWaysToCompute("2-1-1");
+  vector<int> result2 = solution.diffWaysToCompute("2*3-4*5");
+  vector<int> result3 = solution.diffWaysToCompute("4+6+3-6-7*5*6-22*89+78");
 }
