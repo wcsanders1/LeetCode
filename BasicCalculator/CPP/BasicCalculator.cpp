@@ -11,16 +11,18 @@ public:
   int calculate(string s)
   {
     int answer = 0;
-    string currentNumber = "";
-    char operation = '+';
+    string currentNumberStr = "";
+    int currentNumber = 0;
+    char nextOperation = '+';
+    char priorOperation = '+';
 
-    for (int i = 0; i < s.size(); i++)
+    for (int index = 0; index < s.size(); index++)
     {
-      char current = s[i];
+      char current = s[index];
 
       if (isdigit(current))
       {
-        currentNumber += current;
+        currentNumberStr += current;
         continue;
       }
 
@@ -29,26 +31,49 @@ public:
         continue;
       }
 
+      if (current == '+' || current == '-')
+      {
+        nextOperation = current;
+      }
+
       if (current == '(')
       {
-        int expressionEndIndex = getExpressionEndIndex(s.substr(i));
-        int expressionAnswer = calculate(s.substr(i + 1, expressionEndIndex - 1));
-
-        // TODO: something
+        int endIndex = getExpressionEndIndex(s.substr(index));
+        currentNumber = calculate(s.substr(index + 1, endIndex - 1));
+        index += endIndex;
       }
-
-      if (operation == '+')
+      else
       {
-        answer += atoi(currentNumber.c_str());
+        currentNumber = atoi(currentNumberStr.c_str());
       }
 
-      if (operation == '-')
+      if (priorOperation == '+')
       {
-        answer -= atoi(currentNumber.c_str());
+        answer += currentNumber;
       }
 
-      operation = current;
-      currentNumber = "";
+      if (priorOperation == '-')
+      {
+        answer -= currentNumber;
+      }
+
+      priorOperation = nextOperation;
+      currentNumberStr = "";
+      currentNumber = 0;
+    }
+
+    if (currentNumberStr.size() > 0)
+    {
+      currentNumber = atoi(currentNumberStr.c_str());
+      if (priorOperation == '+')
+      {
+        answer += currentNumber;
+      }
+
+      if (priorOperation == '-')
+      {
+        answer -= currentNumber;
+      }
     }
 
     return answer;
@@ -79,3 +104,15 @@ private:
     return s.size() - 1;
   }
 };
+
+int main()
+{
+  Solution solution;
+
+  int result1 = solution.calculate("1 + 1");
+  int result2 = solution.calculate("1+1");
+  int result3 = solution.calculate("2-1 + 2");
+  int result4 = solution.calculate("(1+(4+5+2)-3)+(6+8)");
+  int result5 = solution.calculate("- ( 3+4)");
+  int result6 = solution.calculate("- (3 + (4 + 5))");
+}
