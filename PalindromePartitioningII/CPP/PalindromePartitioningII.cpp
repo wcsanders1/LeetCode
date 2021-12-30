@@ -9,51 +9,27 @@ class Solution
 public:
   int minCut(string s)
   {
-    return getMinCut(s, *new map<string, int>());
-  }
-
-private:
-  int getMinCut(string s, map<string, int> &cache)
-  {
-    if (cache.count(s))
+    int size = s.size();
+    vector<int> cut(size + 1, 0);
+    for (int i = 0; i <= size; i++)
     {
-      return cache[s];
+      cut[i] = i - 1;
     }
 
-    if (isPalindrome(s))
+    for (int i = 0; i < size; i++)
     {
-      cache.insert({s, 0});
-      return 0;
-    }
-
-    int result = INT32_MAX;
-    for (int i = 0; i < s.size() - 1; i++)
-    {
-      int tempResult = getMinCut(s.substr(0, i + 1), cache) + getMinCut(s.substr(i + 1, s.size() - i), cache) + 1;
-      if (tempResult < result)
+      for (int j = 0; i - j >= 0 && i + j < size && s[i - j] == s[i + j]; j++)
       {
-        result = tempResult;
+        cut[i + j + 1] = min(cut[i + j + 1], 1 + cut[i - j]);
+      }
+
+      for (int j = 1; i - j + 1 >= 0 && i + j < size && s[i - j + 1] == s[i + j]; j++)
+      {
+        cut[i + j + 1] = min(cut[i + j + 1], 1 + cut[i - j + 1]);
       }
     }
 
-    cache.insert({s, result});
-    return result;
-  }
-
-  bool isPalindrome(string s)
-  {
-    int start = 0;
-    int end = s.size() - 1;
-
-    while (start <= end)
-    {
-      if (s[start++] != s[end--])
-      {
-        return false;
-      }
-    }
-
-    return true;
+    return cut[size];
   }
 };
 
@@ -65,8 +41,8 @@ int main()
   int result2 = solution.minCut("aab");                                                // 1
   int result3 = solution.minCut("a");                                                  // 0
   int result4 = solution.minCut("ab");                                                 // 1
-  int result5 = solution.minCut("aabbccdd");                                           // 3
+  int result5 = solution.minCut("aabbaaccdd");                                         // 2
   int result6 = solution.minCut("abcdefgfedcba");                                      // 0
   int result7 = solution.minCut("eegiicgaeadbcfacfhifdbiehbgejcaeggcgbahfcajfhjjdgj"); // 42
-  // int result8 = solution.minCut("apjesgpsxoeiokmqmfgvjslcjukbqxpsobyhjpbgdfruqdkeiszrlmtwgfxyfostpqczidfljwfbbrflkgdvtytbgqalguewnhvvmcgxboycffopmtmhtfizxkmeftcucxpobxmelmjtuzigsxnncxpaibgpuijwhankxbplpyejxmrrjgeoevqozwdtgospohznkoyzocjlracchjqnggbfeebmuvbicbvmpuleywrpzwsihivnrwtxcukwplgtobhgxukwrdlszfaiqxwjvrgxnsveedxseeyeykarqnjrtlaliyudpacctzizcftjlunlgnfwcqqxcqikocqffsjyurzwysfjmswvhbrmshjuzsgpwyubtfbnwajuvrfhlccvfwhxfqthkcwhatktymgxostjlztwdxritygbrbibdgkezvzajizxasjnrcjwzdfvdnwwqeyumkamhzoqhnqjfzwzbixclcxqrtniznemxeahfozp");
+  int result8 = solution.minCut("apjesgpsxoeiokmqmfgvjslcjukbqxpsobyhjpbgdfruqdkeiszrlmtwgfxyfostpqczidfljwfbbrflkgdvtytbgqalguewnhvvmcgxboycffopmtmhtfizxkmeftcucxpobxmelmjtuzigsxnncxpaibgpuijwhankxbplpyejxmrrjgeoevqozwdtgospohznkoyzocjlracchjqnggbfeebmuvbicbvmpuleywrpzwsihivnrwtxcukwplgtobhgxukwrdlszfaiqxwjvrgxnsveedxseeyeykarqnjrtlaliyudpacctzizcftjlunlgnfwcqqxcqikocqffsjyurzwysfjmswvhbrmshjuzsgpwyubtfbnwajuvrfhlccvfwhxfqthkcwhatktymgxostjlztwdxritygbrbibdgkezvzajizxasjnrcjwzdfvdnwwqeyumkamhzoqhnqjfzwzbixclcxqrtniznemxeahfozp");
 }
