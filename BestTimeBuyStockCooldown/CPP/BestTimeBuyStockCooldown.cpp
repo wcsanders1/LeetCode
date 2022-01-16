@@ -8,54 +8,21 @@ class Solution
 public:
   int maxProfit(vector<int> &prices)
   {
-    vector<LastAction> actions(prices.size(), Nothing);
-    vector<int> dp(prices.size(), 0);
+    vector<int> rest(prices.size(), 0);
+    vector<int> sell(prices.size(), 0);
+    vector<int> buy(prices.size(), 0);
+
+    buy[0] = -prices[0];
 
     for (int i = 1; i < prices.size(); i++)
     {
-      if (prices[i] >= prices[i - 1])
-      {
-        int profit = prices[i] - prices[i - 1];
-        if (actions[i - 1] == Cooldown)
-        {
-          int priorProfit = dp[i - 2] - dp[i - 3];
-          if (profit > priorProfit)
-          {
-            dp[i - 2] = dp[i - 3];
-            dp[i - 1] = dp[i - 2];
-            dp[i] = profit + dp[i - 1];
-            actions[i - 1] = Buy;
-            actions[i] = Hold;
-          }
-        }
-        else
-        {
-          dp[i] = profit + dp[i - 1];
-          actions[i] = Hold;
-        }
-      }
-      else
-      {
-        if (actions[i - 1] != Cooldown)
-        {
-          actions[i] = Cooldown;
-        }
-        dp[i] = dp[i - 1];
-      }
+      buy[i] = max(buy[i - 1], rest[i - 1] - prices[i]);
+      sell[i] = max(sell[i - 1], buy[i - 1] + prices[i]);
+      rest[i] = max(buy[i - 1], max(rest[i - 1], sell[i - 1]));
     }
 
-    return dp[prices.size() - 1];
+    return max(rest[prices.size() - 1], sell[prices.size() - 1]);
   }
-
-private:
-  enum LastAction
-  {
-    Nothing,
-    Buy,
-    Sell,
-    Cooldown,
-    Hold
-  };
 };
 
 int main()
