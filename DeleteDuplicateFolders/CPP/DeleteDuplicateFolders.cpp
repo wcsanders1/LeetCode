@@ -47,34 +47,46 @@ public:
     }
 
     map<string, vector<Node *> *> childrenToParents;
+    mapChildrenToParents(tree, childrenToParents);
 
     vector<vector<string>> result;
     return result;
   }
 
 private:
-  string mapChildrenToParents(Node &node, map<string, vector<Node *>> &childrenToParents)
+  void mapChildrenToParents(Node *node, map<string, vector<Node *> *> &childrenToParents)
   {
-    for (Node *child : node.Children)
+    for (Node *child : node->Children)
     {
-      string descendants = mapChildrenToParents(*child, childrenToParents);
-      if (childrenToParents.count(descendants))
+      if (!child->Children.size())
       {
-        bool canDelete = true;
-        for (Node *subchild : child->Children)
+        if (childrenToParents.count(child->Value))
         {
-          if (!subchild->canDelete)
+          child->canDelete = true;
+          for (Node *parent : *(childrenToParents[child->Value]))
+          {
+            parent->canDelete = true;
+          }
+          (*childrenToParents[child->Value]).push_back(child);
+        }
+        else
+        {
+          childrenToParents.insert({child->Value, new vector<Node *>{node}});
+        }
+      }
+      else
+      {
+        mapChildrenToParents(child, childrenToParents);
+        bool canDelete = true;
+        for (Node *subChild : child->Children)
+        {
+          if (!subChild->canDelete)
           {
             canDelete = false;
             break;
           }
         }
         child->canDelete = canDelete;
-        childrenToParents[descendants].push_back(child);
-      }
-      else
-      {
-        childrenToParents.insert({descendants, vector<Node *>{child}});
       }
     }
   }
