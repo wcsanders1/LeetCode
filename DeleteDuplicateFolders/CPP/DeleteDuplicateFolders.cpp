@@ -49,8 +49,10 @@ public:
     map<string, vector<Node *> *> childrenToParents;
     mapChildrenToParents(tree, childrenToParents);
 
-    vector<vector<string>> result;
-    return result;
+    vector<vector<string>> *result = new vector<vector<string>>();
+    prune(tree, result);
+
+    return *result;
   }
 
 private:
@@ -90,6 +92,33 @@ private:
       }
     }
   }
+
+  void prune(Node *node, vector<vector<string>> *result, vector<string> *currentPath = nullptr)
+  {
+    if (!node->Children.size())
+    {
+      return;
+    }
+
+    for (Node *child : node->Children)
+    {
+      if (child->canDelete)
+      {
+        continue;
+      }
+      else
+      {
+        if (currentPath == NULL)
+        {
+          currentPath = new vector<string>();
+        }
+        currentPath->push_back(child->Value);
+        result->push_back(*currentPath);
+        vector<string> *newPath = currentPath;
+        prune(child, result, newPath);
+      }
+    }
+  }
 };
 
 int main()
@@ -105,4 +134,31 @@ int main()
           *new vector<string>{"a", "b", "x", "y"},
           *new vector<string>{"w"},
           *new vector<string>{"w", "y"}});
+
+  vector<vector<string>> result2 = solution.deleteDuplicateFolder(
+      *new vector<vector<string>>{
+          *new vector<string>{"a"},
+          *new vector<string>{"b"},
+          *new vector<string>{"a", "x"},
+          *new vector<string>{"a", "z"},
+          *new vector<string>{"b", "x"},
+          *new vector<string>{"b", "z"},
+          *new vector<string>{"a", "x", "y"},
+          *new vector<string>{"b", "x", "y"}});
+
+  vector<vector<string>> result3 = solution.deleteDuplicateFolder(
+      *new vector<vector<string>>{
+          *new vector<string>{"a"},
+          *new vector<string>{"c"},
+          *new vector<string>{"d"},
+          *new vector<string>{"a", "b"},
+          *new vector<string>{"c", "b"},
+          *new vector<string>{"d", "a"}});
+
+  vector<vector<string>> result4 = solution.deleteDuplicateFolder(
+      *new vector<vector<string>>{
+          *new vector<string>{"a"},
+          *new vector<string>{"c"},
+          *new vector<string>{"a", "b"},
+          *new vector<string>{"c", "d"}});
 }
