@@ -114,7 +114,11 @@ private:
         }
         currentPath->push_back(child->Value);
         result->push_back(*currentPath);
-        vector<string> *newPath = currentPath;
+        vector<string> *newPath = new vector<string>();
+        for (string s : *currentPath)
+        {
+          newPath->push_back(s);
+        }
         prune(child, result, newPath);
       }
     }
