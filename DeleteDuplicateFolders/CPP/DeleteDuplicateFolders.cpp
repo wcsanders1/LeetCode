@@ -1,15 +1,19 @@
+// Not from my own personal mind
+
 #include <vector>
 #include <string>
 #include <map>
+#include <unordered_map>
 
 using namespace std;
 
 class Node
 {
 public:
-  string Value;
-  vector<Node *> Children;
-  bool canDelete;
+  string value;
+  map<string, Node *> children;
+  bool canDelete = false;
+  Node(string value = "/") : value(value) {}
 };
 
 class Solution
@@ -17,111 +21,70 @@ class Solution
 public:
   vector<vector<string>> deleteDuplicateFolder(vector<vector<string>> &paths)
   {
-    Node *tree = new Node();
-    tree->Value = "/";
-
-    for (vector<string> path : paths)
+    Node tree;
+    for (vector<string> &path : paths)
     {
-      Node *currentNode = tree;
-      for (string s : path)
-      {
-        Node *matchngNode = NULL;
-        for (Node *n : currentNode->Children)
-        {
-          if (n->Value == s)
-          {
-            matchngNode = n;
-            break;
-          }
-        }
-
-        if (matchngNode == NULL)
-        {
-          matchngNode = new Node();
-          matchngNode->Value = s;
-          currentNode->Children.push_back(matchngNode);
-        }
-
-        currentNode = matchngNode;
-      }
+      buildTree(&tree, path);
     }
-
-    map<string, vector<Node *> *> childrenToParents;
-    mapChildrenToParents(tree, childrenToParents);
-
-    vector<vector<string>> *result = new vector<vector<string>>();
-    prune(tree, result);
-
-    return *result;
+    deduplicate(&tree);
+    for (auto &[name, child] : tree.children)
+    {
+      getPath(child);
+    }
+    return answer;
   }
 
 private:
-  void mapChildrenToParents(Node *node, map<string, vector<Node *> *> &childrenToParents)
+  void buildTree(Node *node, vector<string> &path)
   {
-    for (Node *child : node->Children)
+    for (string &s : path)
     {
-      if (!child->Children.size())
+      if (!node->children.count(s))
       {
-        if (childrenToParents.count(child->Value))
-        {
-          child->canDelete = true;
-          for (Node *parent : *(childrenToParents[child->Value]))
-          {
-            parent->canDelete = true;
-          }
-          (*childrenToParents[child->Value]).push_back(child);
-        }
-        else
-        {
-          childrenToParents.insert({child->Value, new vector<Node *>{node}});
-        }
+        node->children[s] = new Node(s);
+      }
+      node = node->children[s];
+    }
+  }
+  unordered_map<string, Node *> seen;
+  string deduplicate(Node *node)
+  {
+    string fullname;
+    for (auto &[name, child] : node->children)
+    {
+      fullname += deduplicate(child);
+    }
+
+    if (fullname.size())
+    {
+      if (seen.count(fullname))
+      {
+        seen[fullname]->canDelete = node->canDelete = true;
       }
       else
       {
-        mapChildrenToParents(child, childrenToParents);
-        bool canDelete = true;
-        for (Node *subChild : child->Children)
-        {
-          if (!subChild->canDelete)
-          {
-            canDelete = false;
-            break;
-          }
-        }
-        child->canDelete = canDelete;
+        seen[fullname] = node;
       }
     }
+
+    return "(" + node->value + fullname + ")";
   }
 
-  void prune(Node *node, vector<vector<string>> *result, vector<string> *currentPath = nullptr)
+  vector<vector<string>> answer;
+  vector<string> path;
+  void getPath(Node *node)
   {
-    if (!node->Children.size())
+    if (node->canDelete)
     {
       return;
     }
-
-    for (Node *child : node->Children)
+    path.push_back(node->value);
+    answer.push_back(path);
+    for (auto &[name, child] : node->children)
     {
-      if (child->canDelete)
-      {
-        continue;
-      }
-      else
-      {
-        if (currentPath == NULL)
-        {
-          currentPath = new vector<string>();
-        }
-        currentPath->push_back(child->Value);
-        result->push_back(*currentPath);
-        vector<string> *newPath = new vector<string>();
-        for (string s : *currentPath)
-        {
-          newPath->push_back(s);
-        }
-        prune(child, result, newPath);
-      }
+      getPath(child);
     }
+    path.pop_back();
   }
 };
 
