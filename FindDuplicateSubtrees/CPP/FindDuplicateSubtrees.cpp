@@ -34,10 +34,12 @@ private:
   {
     if (node == nullptr)
     {
-      return "";
+      return "NULL";
     }
 
-    string path = "(" + to_string(node->val) + ")" + getSubtrees(node->left, subtrees) + getSubtrees(node->right, subtrees);
+    string path = "(" + to_string(node->val) + "-" +
+                  "left:" + getSubtrees(node->left, subtrees) + ":left" +
+                  "right:" + getSubtrees(node->right, subtrees) + ":right)";
 
     pair<string, TreeNode *> sub(path, node);
     subtrees->push_back(sub);
