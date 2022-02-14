@@ -30,23 +30,18 @@ public:
   }
 
 private:
-  void getSubtrees(TreeNode *node, vector<pair<string, TreeNode *>> *subtrees)
+  string getSubtrees(TreeNode *node, vector<pair<string, TreeNode *>> *subtrees)
   {
     if (node == nullptr)
     {
-      return;
+      return "";
     }
 
-    string path = "(" + to_string(node->val) + ")";
-    for (auto subtree : *subtrees)
-    {
-      subtree.first = subtree.first + path;
-    }
+    string path = "(" + to_string(node->val) + ")" + getSubtrees(node->left, subtrees) + getSubtrees(node->right, subtrees);
 
     pair<string, TreeNode *> sub(path, node);
     subtrees->push_back(sub);
 
-    getSubtrees(node->left, subtrees);
-    getSubtrees(node->right, subtrees);
+    return path;
   }
 };
