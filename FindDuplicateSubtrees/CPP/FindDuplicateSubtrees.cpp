@@ -3,6 +3,7 @@
 #include <map>
 #include <unordered_map>
 #include <utility>
+#include <unordered_set>
 
 using namespace std;
 
@@ -24,7 +25,25 @@ public:
     vector<pair<string, TreeNode *>> subtrees;
     getSubtrees(root, &subtrees);
 
+    unordered_map<string, vector<TreeNode *>> nodesByPath;
+    for (auto [path, node] : subtrees)
+    {
+      if (nodesByPath.count(path) == 0)
+      {
+        nodesByPath[path] = vector<TreeNode *>();
+      }
+
+      nodesByPath[path].push_back(node);
+    }
+
     vector<TreeNode *> answer;
+    for (auto [path, nodes] : nodesByPath)
+    {
+      if (nodes.size() > 1)
+      {
+        answer.push_back(nodes[0]);
+      }
+    }
 
     return answer;
   }
@@ -47,3 +66,12 @@ private:
     return path;
   }
 };
+
+int main()
+{
+  Solution solution;
+
+  auto result1 = solution.findDuplicateSubtrees(new TreeNode(1, new TreeNode(2, new TreeNode(4), nullptr), new TreeNode(3, new TreeNode(2, new TreeNode(4), nullptr), new TreeNode(4))));
+
+  return 0;
+}
