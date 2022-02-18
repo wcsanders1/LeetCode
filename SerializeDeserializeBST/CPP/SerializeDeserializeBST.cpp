@@ -30,14 +30,15 @@ public:
     while (!q.empty())
     {
       TreeNode *node = q.front();
-      s += to_string(node->val) + ",";
       q.pop();
-      if (node->left != NULL)
+      if (node == NULL)
       {
-        q.push(node->left);
+        s += "null,";
       }
-      if (node->right != NULL)
+      else
       {
+        s += to_string(node->val) + ",";
+        q.push(node->left);
         q.push(node->right);
       }
     }
@@ -55,17 +56,49 @@ public:
 
     TreeNode *root;
     queue<TreeNode *> q;
-    q.push(root);
     stringstream s_stream(data);
+    bool left = true;
     while (s_stream.good())
     {
       string sub;
       getline(s_stream, sub, ',');
+      if (sub.size() == 0)
+      {
+        break;
+      }
+
+      if (q.empty())
+      {
+        root = new TreeNode(stoi(sub));
+        q.push(root);
+        continue;
+      }
+
+      if (sub == "null")
+      {
+        if (!left)
+        {
+          q.pop();
+        }
+        left = !left;
+        continue;
+      }
+
       int val = stoi(sub);
       TreeNode *node = q.front();
-      q.pop();
-      node->val = val;
-      node->left = new TreeNode();
+      if (left)
+      {
+        node->left = new TreeNode(val);
+        q.push(node->left);
+      }
+      else
+      {
+        node->right = new TreeNode(val);
+        q.push(node->right);
+        q.pop();
+      }
+
+      left = !left;
     }
 
     return root;
@@ -78,3 +111,21 @@ public:
 // string tree = ser->serialize(root);
 // TreeNode* ans = deser->deserialize(tree);
 // return ans;
+
+int main()
+{
+  Codec *ser = new Codec();
+  Codec *deser = new Codec();
+
+  TreeNode *root1 = new TreeNode(2);
+  root1->left = new TreeNode(1);
+  root1->right = new TreeNode(3);
+  string tree1 = ser->serialize(root1);
+  TreeNode *ans1 = deser->deserialize(tree1);
+
+  TreeNode *root2 = new TreeNode(1);
+  root2->left = NULL;
+  root2->right = new TreeNode(2);
+  string tree2 = ser->serialize(root2);
+  TreeNode *ans2 = deser->deserialize(tree2);
+}
