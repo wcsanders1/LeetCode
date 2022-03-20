@@ -30,40 +30,33 @@ public:
       graph[edge[1]].push_back(Node(edge[0], probability));
     }
 
-    vector<double> dp(n, 0);
-    vector<bool> traveled(n, false);
-    double maxPath = findMaxPath(graph, dp, start, end, traveled);
-
-    return maxPath;
+    return findMaxPath(n, graph, start, end);
   }
 
 private:
-  double findMaxPath(vector<vector<Node>> &graph, vector<double> &dp, int start, int end, vector<bool> &traveled)
+  double findMaxPath(int n, vector<vector<Node>> &graph, int start, int end)
   {
-    double maxPath = 0;
-    for (Node node : graph[start])
+    vector<double> dp(n, 0);
+    dp[start] = 1;
+    vector<int> q{start};
+    while (!q.empty())
     {
-      if (traveled[node.connection])
+      vector<int> subQ;
+      for (int n : q)
       {
-        continue;
+        for (Node node : graph[n])
+        {
+          if (dp[node.connection] < dp[n] * node.probability)
+          {
+            dp[node.connection] = dp[n] * node.probability;
+            subQ.push_back(node.connection);
+          }
+        }
       }
-
-      if (node.connection == end)
-      {
-        maxPath = max(maxPath, node.probability);
-        continue;
-      }
-
-      else if (dp[node.connection] == 0)
-      {
-        traveled[start] = true;
-        dp[node.connection] = findMaxPath(graph, dp, node.connection, end, traveled);
-        traveled[start] = false;
-      }
-      maxPath = max(maxPath, dp[node.connection] * node.probability);
+      swap(q, subQ);
     }
 
-    return maxPath;
+    return dp[end];
   }
 };
 
@@ -71,9 +64,9 @@ int main()
 {
   Solution solution;
 
-  double result1 = solution.maxProbability(3, vector<vector<int>>{vector<int>{0, 1}, vector<int>{1, 2}, vector<int>{0, 2}}, vector<double>{.5, .5, .2}, 0, 2);
-  double result2 = solution.maxProbability(3, vector<vector<int>>{vector<int>{0, 1}, vector<int>{1, 2}, vector<int>{0, 2}}, vector<double>{.5, .5, .3}, 0, 2);
-  double result3 = solution.maxProbability(3, vector<vector<int>>{vector<int>{0, 1}}, vector<double>{.5}, 0, 2);
-  double result4 = solution.maxProbability(4, vector<vector<int>>{vector<int>{0, 1}, vector<int>{1, 2}, vector<int>{0, 2}, vector<int>{0, 3}, vector<int>{1, 3}},
-                                           vector<double>{.4, .5, .2, .5, .9}, 0, 2);
+  double result1 = solution.maxProbability(3, *new vector<vector<int>>{vector<int>{0, 1}, vector<int>{1, 2}, vector<int>{0, 2}}, *new vector<double>{.5, .5, .2}, 0, 2);
+  double result2 = solution.maxProbability(3, *new vector<vector<int>>{vector<int>{0, 1}, vector<int>{1, 2}, vector<int>{0, 2}}, *new vector<double>{.5, .5, .3}, 0, 2);
+  double result3 = solution.maxProbability(3, *new vector<vector<int>>{vector<int>{0, 1}}, *new vector<double>{.5}, 0, 2);
+  double result4 = solution.maxProbability(4, *new vector<vector<int>>{vector<int>{0, 1}, vector<int>{1, 2}, vector<int>{0, 2}, vector<int>{0, 3}, vector<int>{1, 3}},
+                                           *new vector<double>{.4, .5, .2, .5, .9}, 0, 2);
 }
