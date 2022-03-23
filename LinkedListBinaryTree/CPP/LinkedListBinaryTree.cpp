@@ -28,6 +28,12 @@ class Solution
 public:
   bool isSubPath(ListNode *head, TreeNode *root)
   {
+    return isSubPath(head, root, head);
+  }
+
+private:
+  bool isSubPath(ListNode *head, TreeNode *root, ListNode *listRoot)
+  {
     if (head == nullptr)
     {
       return true;
@@ -38,9 +44,21 @@ public:
       return false;
     }
 
-    ListNode *next = root->val == head->val ? head->next : head;
+    ListNode *next;
+    if (root->val == head->val)
+    {
+      next = head->next;
+    }
+    else if (root->val == listRoot->val)
+    {
+      next = listRoot->next;
+    }
+    else
+    {
+      next = listRoot;
+    }
 
-    return isSubPath(next, root->left) || isSubPath(next, root->right);
+    return isSubPath(next, root->left, listRoot) || isSubPath(next, root->right, listRoot);
   }
 };
 
@@ -58,4 +76,7 @@ int main()
                                                                            new TreeNode(8,
                                                                                         new TreeNode(1), new TreeNode(3))),
                                                               nullptr)));
+
+  bool result2 = solution.isSubPath(new ListNode(1, new ListNode(10)),
+                                    new TreeNode(1, nullptr, new TreeNode(1, new TreeNode(10, new TreeNode(9), nullptr), new TreeNode(1))));
 }
