@@ -1,6 +1,7 @@
 // https://leetcode.com/problems/linked-list-in-binary-tree/
 #include <vector>
 #include <string>
+#include <queue>
 
 using namespace std;
 
@@ -28,37 +29,45 @@ class Solution
 public:
   bool isSubPath(ListNode *head, TreeNode *root)
   {
-    return isSubPath(head, root, head);
+    queue<TreeNode *> q;
+    q.push(root);
+
+    while (!q.empty())
+    {
+      TreeNode *node = q.front();
+      q.pop();
+
+      if (dfs(head, node))
+      {
+        return true;
+      }
+      if (node->left != nullptr)
+      {
+        q.emplace(node->left);
+      }
+      if (node->right != nullptr)
+      {
+        q.emplace(node->right);
+      }
+    }
+
+    return false;
   }
 
 private:
-  bool isSubPath(ListNode *head, TreeNode *root, ListNode *listRoot)
+  bool dfs(ListNode *head, TreeNode *root)
   {
     if (head == nullptr)
     {
       return true;
     }
 
-    if (root == nullptr)
+    if (root == nullptr || root->val != head->val)
     {
       return false;
     }
 
-    ListNode *next;
-    if (root->val == head->val)
-    {
-      next = head->next;
-    }
-    else if (root->val == listRoot->val)
-    {
-      next = listRoot->next;
-    }
-    else
-    {
-      next = listRoot;
-    }
-
-    return isSubPath(next, root->left, listRoot) || isSubPath(next, root->right, listRoot);
+    return dfs(head->next, root->left) || dfs(head->next, root->right);
   }
 };
 
@@ -79,4 +88,7 @@ int main()
 
   bool result2 = solution.isSubPath(new ListNode(1, new ListNode(10)),
                                     new TreeNode(1, nullptr, new TreeNode(1, new TreeNode(10, new TreeNode(9), nullptr), new TreeNode(1))));
+
+  bool result3 = solution.isSubPath(new ListNode(2, new ListNode(2, new ListNode(1))),
+                                    new TreeNode(2, nullptr, new TreeNode(2, nullptr, new TreeNode(2, nullptr, new TreeNode(1)))));
 }
