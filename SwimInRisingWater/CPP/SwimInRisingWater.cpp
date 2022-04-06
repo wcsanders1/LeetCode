@@ -11,6 +11,7 @@ public:
   {
     vector<vector<int>> distances(grid.size(), vector<int>(grid[0].size(), INT_MAX));
     distances[0][0] = grid[0][0];
+    vector<vector<int>> directions{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     queue<vector<int>> q;
     q.emplace(vector<int>{0, 0});
@@ -23,47 +24,20 @@ public:
       int col = node[1];
       int parentDistance = distances[row][col];
 
-      if (row > 0)
+      for (vector<int> direction : directions)
       {
-        int childDistance = distances[row - 1][col];
-        int childValue = grid[row - 1][col];
-        if (childDistance > childValue && childDistance > parentDistance)
-        {
-          distances[row - 1][col] = max(childValue, parentDistance);
-          q.emplace(vector<int>{row - 1, col});
-        }
-      }
+        int nRow = row + direction[0];
+        int nCol = col + direction[1];
 
-      if (row < grid.size() - 1)
-      {
-        int childDistance = distances[row + 1][col];
-        int childValue = grid[row + 1][col];
-        if (childDistance > childValue && childDistance > parentDistance)
+        if (nRow >= 0 && nRow < grid.size() && nCol >= 0 && nCol < grid[0].size())
         {
-          distances[row + 1][col] = max(childValue, parentDistance);
-          q.emplace(vector<int>{row + 1, col});
-        }
-      }
-
-      if (col > 0)
-      {
-        int childDistance = distances[row][col - 1];
-        int childValue = grid[row][col - 1];
-        if (childDistance > childValue && childDistance > parentDistance)
-        {
-          distances[row][col - 1] = max(childValue, parentDistance);
-          q.emplace(vector<int>{row, col - 1});
-        }
-      }
-
-      if (col < grid[row].size() - 1)
-      {
-        int childDistance = distances[row][col + 1];
-        int childValue = grid[row][col + 1];
-        if (childDistance > childValue && childDistance > parentDistance)
-        {
-          distances[row][col + 1] = max(childValue, parentDistance);
-          q.emplace(vector<int>{row, col + 1});
+          int childDistance = distances[nRow][nCol];
+          int childValue = grid[nRow][nCol];
+          if (childDistance > childValue && childDistance > parentDistance)
+          {
+            distances[nRow][nCol] = max(childValue, parentDistance);
+            q.emplace(vector<int>{nRow, nCol});
+          }
         }
       }
     }
