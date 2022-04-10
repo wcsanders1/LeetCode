@@ -15,17 +15,18 @@ public:
     efforts[0][0] = 0;
     vector<vector<int>> directions{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-    queue<vector<int>> q;
+    priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> q;
     q.emplace(vector<int>{0, 0});
     while (!q.empty())
     {
-      vector<int> node = q.front();
+      vector<int> node = q.top();
       q.pop();
 
       int row = node[0];
       int col = node[1];
-      int height = heights[row][col];
       int priorEffort = efforts[row][col];
+
+      int height = heights[row][col];
       for (vector<int> direction : directions)
       {
         int nRow = row + direction[0];
