@@ -37,7 +37,7 @@ public:
       }
     }
 
-    int answer = 0;
+    int answer = 1;
     queue<string> q;
     unordered_set<string> visited;
     q.emplace(beginWord);
@@ -45,29 +45,28 @@ public:
 
     while (!q.empty())
     {
-      answer++;
-      string word = q.front();
-      q.pop();
-
-      vector<string> connections = graph[word];
-      if (connections.size() == 0)
+      int qSize = q.size();
+      for (int i = 0; i < qSize; i++)
       {
-        return 0;
-      }
+        string word = q.front();
+        q.pop();
 
-      for (string connection : connections)
-      {
-        if (connection == endWord)
+        if (word == endWord)
         {
           return answer;
         }
 
-        if (visited.find(connection) == visited.end())
+        for (string connection : graph[word])
         {
-          visited.insert(connection);
-          q.emplace(connection);
+          if (visited.find(connection) == visited.end())
+          {
+            visited.insert(connection);
+            q.emplace(connection);
+          }
         }
       }
+
+      answer++;
     }
 
     return 0;
@@ -80,4 +79,5 @@ int main()
 
   int result1 = solution.ladderLength("hit", "cog", vector<string>{"hot", "dot", "dog", "lot", "log", "cog"});
   int result2 = solution.ladderLength("hit", "cog", vector<string>{"hot", "dot", "dog", "lot", "log"});
+  int result3 = solution.ladderLength("a", "c", vector<string>{"a", "b", "c"});
 }
