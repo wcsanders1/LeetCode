@@ -19,7 +19,7 @@ class Solution
 public:
   TreeNode *sortedArrayToBST(vector<int> &nums)
   {
-    TreeNode *root = getNode(nums, 0, nums.size());
+    TreeNode *root = getNode(nums, 0, nums.size() - 1);
     return root;
   }
 
@@ -32,10 +32,6 @@ private:
     }
 
     int mid = (start + end) / 2;
-    if (mid < 0 || mid >= nums.size())
-    {
-      return nullptr;
-    }
 
     TreeNode *node = new TreeNode(nums[mid]);
     node->left = getNode(nums, start, mid - 1);
