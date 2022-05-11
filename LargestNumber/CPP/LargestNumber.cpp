@@ -9,6 +9,7 @@ class Trie
 {
 public:
   int amount = 0;
+  int value = 0;
   unordered_map<int, Trie *> children;
 };
 
@@ -28,6 +29,7 @@ public:
         if (tempNode->children.find(digit) == tempNode->children.end())
         {
           Trie *newNode = new Trie;
+          newNode->value = i;
           tempNode->children[digit] = newNode;
           tempNode = newNode;
         }
@@ -45,17 +47,8 @@ public:
     {
       if (root.children.find(i) != root.children.end())
       {
-        bool singleUsed = false;
         while (root.children[i]->amount > 0)
         {
-          if (useSingle(root.children[i], i) && !singleUsed)
-          {
-            singleUsed = true;
-            root.children[i]->amount--;
-            answer += to_string(i);
-            continue;
-          }
-
           root.children[i]->amount--;
           answer += to_string(i);
           buildLongestNumber(answer, root.children[i]);
@@ -67,24 +60,6 @@ public:
   }
 
 private:
-  bool useSingle(Trie *node, int current)
-  {
-    for (int i = 9; i >= 0; i--)
-    {
-      if (i > current && node->children.find(i) != node->children.end() && node->children[i]->amount > 0)
-      {
-        return false;
-      }
-
-      if (i <= current && node->children.find(i) != node->children.end() && node->children[i]->amount < node->amount)
-      {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   vector<int> *getDigits(int num)
   {
     vector<int> *digits = new vector<int>(0);
@@ -107,6 +82,11 @@ private:
       {
         if (node->children[i]->amount > 0)
         {
+          if (node->children[i]->value < node->value && node->children[i]->amount <= node->amount)
+          {
+            break;
+          }
+
           node->children[i]->amount--;
           longest += to_string(i);
           buildLongestNumber(longest, node->children[i]);
@@ -121,9 +101,10 @@ int main()
 {
   Solution solution;
 
-  // string result1 = solution.largestNumber(vector<int>{10, 2});
-  // string result2 = solution.largestNumber(vector<int>{3, 30, 34, 5, 9});
-  // string result3 = solution.largestNumber(vector<int>{33, 339, 333});
-  // string result4 = solution.largestNumber(vector<int>{9, 90, 999});
+  string result1 = solution.largestNumber(vector<int>{10, 2});
+  string result2 = solution.largestNumber(vector<int>{3, 30, 34, 5, 9});
+  string result3 = solution.largestNumber(vector<int>{33, 339, 333});
+  string result4 = solution.largestNumber(vector<int>{9, 90, 999});
   string result5 = solution.largestNumber(vector<int>{111311, 1113}); // 1113111311
+  string result6 = solution.largestNumber(vector<int>{1311, 13});     // 131311
 }
