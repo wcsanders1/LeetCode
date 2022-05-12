@@ -1,99 +1,37 @@
 // https://leetcode.com/problems/largest-number/
+// not mine
 #include <vector>
 #include <string>
-#include <unordered_map>
+#include <algorithm>
 
 using namespace std;
-
-class Trie
-{
-public:
-  int amount = 0;
-  int value = 0;
-  unordered_map<int, Trie *> children;
-};
 
 class Solution
 {
 public:
   string largestNumber(vector<int> &nums)
   {
-    Trie root;
-    for (int num : nums)
+    vector<string> strings;
+    for (int i : nums)
     {
-      vector<int> *digits = getDigits(num);
-      Trie *tempNode = &root;
-      for (int i = digits->size() - 1; i >= 0; i--)
-      {
-        int digit = (*digits)[i];
-        if (tempNode->children.find(digit) == tempNode->children.end())
-        {
-          Trie *newNode = new Trie;
-          newNode->value = i;
-          tempNode->children[digit] = newNode;
-          tempNode = newNode;
-        }
-        else
-        {
-          tempNode = tempNode->children[digit];
-        }
-
-        tempNode->amount++;
-      }
+      strings.push_back(to_string(i));
     }
 
-    string answer = "";
-    for (int i = 9; i >= 0; i--)
+    sort(begin(strings), end(strings), [](string &s1, string &s2)
+         { return s1 + s2 > s2 + s1; });
+
+    string answer;
+    for (string s : strings)
     {
-      if (root.children.find(i) != root.children.end())
-      {
-        while (root.children[i]->amount > 0)
-        {
-          root.children[i]->amount--;
-          answer += to_string(i);
-          buildLongestNumber(answer, root.children[i]);
-        }
-      }
+      answer += s;
+    }
+
+    if (answer[0] == '0')
+    {
+      return "0";
     }
 
     return answer;
-  }
-
-private:
-  vector<int> *getDigits(int num)
-  {
-    vector<int> *digits = new vector<int>(0);
-    while (num >= 10)
-    {
-      int rem = num % 10;
-      digits->push_back(rem);
-      num /= 10;
-    }
-
-    digits->push_back(num);
-    return digits;
-  }
-
-  void buildLongestNumber(string &longest, Trie *node)
-  {
-    for (int i = 9; i >= 0; i--)
-    {
-      if (node->children.find(i) != node->children.end())
-      {
-        if (node->children[i]->amount > 0)
-        {
-          if (node->children[i]->value < node->value && node->children[i]->amount <= node->amount)
-          {
-            break;
-          }
-
-          node->children[i]->amount--;
-          longest += to_string(i);
-          buildLongestNumber(longest, node->children[i]);
-          break;
-        }
-      }
-    }
   }
 };
 
