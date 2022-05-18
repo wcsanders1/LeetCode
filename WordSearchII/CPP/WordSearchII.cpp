@@ -1,133 +1,63 @@
 // https://leetcode.com/problems/word-search-ii/
+// not mine
 #include <string>
 #include <vector>
-#include <unordered_map>
 
 using namespace std;
 
-struct Point
+struct TrieNode
 {
-public:
-    int row;
-    int col;
-    Point(int row, int col) : row(row), col(col) {}
-
-    bool isNextTo(Point point)
+    TrieNode *children[26] = {};
+    string *word;
+    void addWord(string &word)
     {
-        for (vector<int> move : moves)
+        TrieNode *cur = this;
+        for (char c : word)
         {
-            if (row + move[0] == point.row && col + move[1] == point.col)
-            {
-                return true;
-            }
+            c -= 'a';
+            if (cur->children[c] == nullptr)
+                cur->children[c] = new TrieNode();
+            cur = cur->children[c];
         }
-
-        return false;
+        cur->word = &word;
     }
-
-private:
-    vector<vector<int>> const moves{
-        {0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 };
 
 class Solution
 {
 public:
+    int m, n;
+    int DIR[5] = {0, 1, 0, -1, 0};
+    vector<string> ans;
     vector<string> findWords(vector<vector<char>> &board, vector<string> &words)
     {
-        auto graph = makeGraph(board);
-        vector<string> foundWords;
-        for (string word : words)
-        {
-            vector<vector<bool>> visited(board.size(), (vector<bool>(board[0].size(), false)));
-            if (findWord(*graph, word, visited))
-            {
-                foundWords.push_back(word);
-            }
-        }
+        ans.clear();
+        m = board.size();
+        n = board[0].size();
+        TrieNode trieNode;
+        for (string &word : words)
+            trieNode.addWord(word);
 
-        delete graph;
-
-        return foundWords;
+        for (int r = 0; r < m; ++r)
+            for (int c = 0; c < n; ++c)
+                dfs(board, r, c, &trieNode);
+        return ans;
     }
-
-private:
-    bool findWord(unordered_map<char, vector<Point>> &graph, string &word, vector<vector<bool>> &visited)
+    void dfs(vector<vector<char>> &board, int r, int c, TrieNode *cur)
     {
-        if (graph.find(word[0]) == graph.end())
+        if (r < 0 || r == m || c < 0 || c == n || board[r][c] == '#' || cur->children[board[r][c] - 'a'] == nullptr)
+            return;
+        char orgChar = board[r][c];
+        cur = cur->children[orgChar - 'a'];
+        if (cur->word != nullptr)
         {
-            return false;
+            ans.push_back(*cur->word);
+            cur->word = nullptr; // Avoid duplication!
         }
-
-        for (Point point : graph[word[0]])
-        {
-            visited[point.row][point.col] = true;
-            string sub = word.substr(1);
-            bool found = findWord(graph, sub, visited, point);
-            if (found)
-            {
-                return true;
-            }
-
-            visited[point.row][point.col] = false;
-        }
-
-        return false;
-    }
-
-    bool findWord(unordered_map<char, vector<Point>> &graph, string &word, vector<vector<bool>> &visited, Point start)
-    {
-        if (word.size() == 0)
-        {
-            return true;
-        }
-
-        if (graph.find(word[0]) == graph.end())
-        {
-            return false;
-        }
-
-        for (Point point : graph[word[0]])
-        {
-            if (visited[point.row][point.col])
-            {
-                continue;
-            }
-
-            if (point.isNextTo(start))
-            {
-                visited[point.row][point.col] = true;
-                string sub = word.substr(1);
-                bool found = findWord(graph, sub, visited, point);
-                if (found)
-                {
-                    return true;
-                }
-                visited[point.row][point.col] = false;
-            }
-        }
-
-        return false;
-    }
-
-    unordered_map<char, vector<Point>> *makeGraph(vector<vector<char>> &board)
-    {
-        auto *graph = new unordered_map<char, vector<Point>>();
-        for (int row = 0; row < board.size(); row++)
-        {
-            for (int col = 0; col < board[0].size(); col++)
-            {
-                char c = board[row][col];
-                if (graph->find(c) == graph->end())
-                {
-                    (*graph)[c] = vector<Point>();
-                }
-
-                (*graph)[c].push_back(Point(row, col));
-            }
-        }
-
-        return graph;
+        board[r][c] = '#'; // mark as visited!
+        for (int i = 0; i < 4; ++i)
+            dfs(board, r + DIR[i], c + DIR[i + 1], cur);
+        board[r][c] = orgChar; // restore org state
     }
 };
 
