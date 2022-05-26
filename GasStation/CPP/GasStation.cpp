@@ -1,4 +1,5 @@
 // https://leetcode.com/problems/gas-station/
+// not mine
 #include <vector>
 
 using namespace std;
@@ -8,53 +9,24 @@ class Solution
 public:
   int canCompleteCircuit(vector<int> &gas, vector<int> &cost)
   {
-    int totalCost = 0;
-    int totalGas = 0;
-    vector<int> possibleStarts;
-
-    for (int i = 0; i < gas.size(); i++)
+    int start = gas.size() - 1;
+    int end = 0;
+    int sum = gas[start] - cost[start];
+    while (start > end)
     {
-      totalGas += gas[i];
-      totalCost += cost[i];
-      if (gas[i] >= cost[i])
+      if (sum > 0)
       {
-        possibleStarts.push_back(i);
+        sum += gas[end] - cost[end];
+        end++;
+      }
+      else
+      {
+        --start;
+        sum += gas[start] - cost[start];
       }
     }
 
-    if (totalCost > totalGas)
-    {
-      return -1;
-    }
-
-    for (int start : possibleStarts)
-    {
-      int steps = 0;
-      int index = start;
-      int currentGas = 0;
-      while (steps++ < gas.size())
-      {
-        if (index == gas.size())
-        {
-          index = 0;
-        }
-
-        currentGas += gas[index] - cost[index];
-        if (currentGas < 0)
-        {
-          break;
-        }
-
-        index++;
-
-        if (steps == gas.size())
-        {
-          return start;
-        }
-      }
-    }
-
-    return -1;
+    return sum < 0 ? -1 : start;
   }
 };
 
