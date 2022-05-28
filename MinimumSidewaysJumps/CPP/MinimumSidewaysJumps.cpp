@@ -8,37 +8,77 @@ class Solution
 public:
   int minSideJumps(vector<int> &obstacles)
   {
-    return getMinJumps(obstacles, 0, 2);
-  }
+    vector<int> lane1(obstacles.size(), 0);
+    vector<int> lane2(obstacles.size(), 0);
+    vector<int> lane3(obstacles.size(), 0);
 
-private:
-  int getMinJumps(vector<int> &obstacles, int index, int lane, int jumps = 0)
-  {
-    if (index == obstacles.size() - 1)
+    for (int i = obstacles.size() - 2; i >= 0; i--)
     {
-      return jumps;
-    }
-
-    if (obstacles[index + 1] != lane)
-    {
-      return getMinJumps(obstacles, index + 1, lane, jumps);
-    }
-
-    int m = INT32_MAX;
-    for (int i = 1; i <= 3; i++)
-    {
-      if (i == lane)
+      int obstacle = obstacles[i + 1];
+      if (obstacle == 0)
       {
+        lane1[i] = lane1[i + 1];
+        lane2[i] = lane2[i + 1];
+        lane3[i] = lane3[i + 1];
         continue;
       }
 
-      if (obstacles[index] != i)
+      if (obstacle == 1)
       {
-        m = min(m, getMinJumps(obstacles, index + 1, i, jumps + 1));
+        int jumps = INT32_MAX;
+        if (obstacles[i] != 2)
+        {
+          jumps = min(jumps, lane2[i + 1] + 1);
+        }
+
+        if (obstacles[i] != 3)
+        {
+          jumps = min(jumps, lane3[i + 1] + 1);
+        }
+
+        lane1[i] = jumps;
+        lane2[i] = lane2[i + 1];
+        lane3[i] = lane3[i + 1];
+      }
+
+      if (obstacle == 2)
+      {
+        int jumps = INT32_MAX;
+        if (obstacles[i] != 1)
+        {
+          jumps = min(jumps, lane1[i + 1] + 1);
+        }
+
+        if (obstacles[i] != 3)
+        {
+          jumps = min(jumps, lane3[i + 1] + 1);
+        }
+
+        lane2[i] = jumps;
+        lane1[i] = lane1[i + 1];
+        lane3[i] = lane3[i + 1];
+      }
+
+      if (obstacle == 3)
+      {
+        int jumps = INT32_MAX;
+        if (obstacles[i] != 2)
+        {
+          jumps = min(jumps, lane2[i + 1] + 1);
+        }
+
+        if (obstacles[i] != 1)
+        {
+          jumps = min(jumps, lane1[i + 1] + 1);
+        }
+
+        lane3[i] = jumps;
+        lane2[i] = lane2[i + 1];
+        lane1[i] = lane1[i + 1];
       }
     }
 
-    return m;
+    return lane2[0];
   }
 };
 
