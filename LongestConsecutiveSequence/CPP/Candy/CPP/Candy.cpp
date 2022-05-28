@@ -1,4 +1,5 @@
 // https://leetcode.com/problems/candy/
+// not mine
 #include <vector>
 
 using namespace std;
@@ -10,67 +11,32 @@ public:
   {
     int length = ratings.size();
 
-    if (length == 0)
+    vector<int> fromLeft(length, 1);
+    vector<int> fromRight(length, 1);
+
+    for (int i = 1; i < length; i++)
     {
-      return 0;
+      if (ratings[i] > ratings[i - 1])
+      {
+        fromLeft[i] = fromLeft[i - 1] + 1;
+      }
     }
 
-    if (length == 1)
+    for (int i = length - 2; i >= 0; i--)
     {
-      return 1;
+      if (ratings[i] > ratings[i + 1])
+      {
+        fromRight[i] = fromRight[i + 1] + 1;
+      }
     }
 
     int total = 0;
-    int start = 0;
-    int end = 0;
-
-    while (end < length)
+    for (int i = 0; i < length; i++)
     {
-      while (end < length - 1 && ratings[end + 1] < ratings[end])
-      {
-        end++;
-      }
-
-      if (start < end)
-      {
-        total += getIncrementalSum(end - start);
-        start = end;
-      }
-
-      while (end < length - 1 && ratings[end + 1] > ratings[end])
-      {
-        end++;
-      }
-
-      if (start < end)
-      {
-        total += getIncrementalSum(end - start);
-        start = end;
-      }
-
-      while (end < length - 1 && ratings[end + 1] == ratings[end])
-      {
-        total++;
-        start++;
-        end++;
-      }
-
-      end++;
+      total += max(fromLeft[i], fromRight[i]);
     }
 
     return total;
-  }
-
-private:
-  int getIncrementalSum(int num)
-  {
-    int sum = 0;
-    for (int i = 1; i <= num + 1; i++)
-    {
-      sum += i;
-    }
-
-    return sum;
   }
 };
 
@@ -78,6 +44,8 @@ int main()
 {
   Solution solution;
 
-  int result1 = solution.candy(*new vector<int>{1, 0, 2}); // 5
-  int result2 = solution.candy(*new vector<int>{1, 2, 2}); // 4
+  int result1 = solution.candy(*new vector<int>{1, 0, 2});                     // 5
+  int result2 = solution.candy(*new vector<int>{1, 2, 2});                     // 4
+  int result3 = solution.candy(*new vector<int>{1, 3, 2, 2, 1});               // 7
+  int result4 = solution.candy(*new vector<int>{12, 4, 3, 11, 34, 34, 1, 67}); // 16
 }
