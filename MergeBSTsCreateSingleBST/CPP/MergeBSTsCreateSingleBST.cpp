@@ -23,8 +23,10 @@ public:
     {
         vector<bool> merged(trees.size(), false);
         unordered_map<int, vector<TreeNode *>> leafMap;
+        unordered_map<TreeNode *, TreeNode *> rootMap;
 
         mapLeaves(leafMap, trees);
+        mapRoots(rootMap, trees);
 
         for (int i = 0; i < trees.size(); i++)
         {
@@ -62,7 +64,7 @@ public:
 
                 if (parent->left != nullptr && parent->left->val == val)
                 {
-                    if (max < parent->val)
+                    if (max < rootMap[parent->left]->val)
                     {
                         removeIndex = j;
                         diff = newDiff;
@@ -70,7 +72,7 @@ public:
                 }
                 else if (parent->right != nullptr && parent->right->val == val)
                 {
-                    if (min > parent->val)
+                    if (min > rootMap[parent->right]->val)
                     {
                         removeIndex = j;
                         diff = newDiff;
@@ -91,6 +93,16 @@ public:
                 else if (t->right != nullptr && t->right->val == val)
                 {
                     t->right = tree;
+                }
+
+                if (tree->left != nullptr)
+                {
+                    rootMap[tree->left] = t;
+                }
+
+                if (tree->right != nullptr)
+                {
+                    rootMap[tree->right] = t;
                 }
             }
         }
@@ -131,6 +143,22 @@ private:
         }
 
         return tree->val;
+    }
+
+    void mapRoots(unordered_map<TreeNode *, TreeNode *> &rootMap, vector<TreeNode *> &trees)
+    {
+        for (TreeNode *tree : trees)
+        {
+            if (tree->left != nullptr)
+            {
+                rootMap.emplace(tree->left, tree);
+            }
+
+            if (tree->right != nullptr)
+            {
+                rootMap.emplace(tree->right, tree);
+            }
+        }
     }
 
     void mapLeaves(unordered_map<int, vector<TreeNode *>> &leafMap, vector<TreeNode *> &trees)
