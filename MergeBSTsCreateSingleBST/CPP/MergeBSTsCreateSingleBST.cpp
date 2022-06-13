@@ -43,6 +43,11 @@ public:
             for (int j = 0; j < leafMap[val].size(); j++)
             {
                 TreeNode *parent = leafMap[val][j];
+                if (parent == tree)
+                {
+                    continue;
+                }
+
                 if (parent->left == nullptr && parent->right == nullptr)
                 {
                     removeIndex = j;
@@ -85,7 +90,7 @@ public:
                 }
                 else if (t->right != nullptr && t->right->val == val)
                 {
-                    t->right == tree;
+                    t->right = tree;
                 }
             }
         }
@@ -93,7 +98,7 @@ public:
         TreeNode *answer = nullptr;
         for (int i = 0; i < merged.size(); i++)
         {
-            if (merged[i])
+            if (!merged[i])
             {
                 if (answer != nullptr)
                 {
@@ -164,7 +169,7 @@ private:
         {
             if (leafMap.find(tree->val) == leafMap.end())
             {
-                leafMap.emplace(tree->val, vector<TreeNode *>{tree});
+                leafMap.emplace(tree->val, vector<TreeNode *>{parent});
             }
             else
             {
@@ -185,3 +190,26 @@ private:
         }
     }
 };
+
+int main()
+{
+    Solution solution;
+
+    TreeNode *node1_1 = new TreeNode(2, new TreeNode(1), nullptr);
+    TreeNode *node2_1 = new TreeNode(3, new TreeNode(2), new TreeNode(5));
+    TreeNode *node3_1 = new TreeNode(5, new TreeNode(4), nullptr);
+    TreeNode *result1 = solution.canMerge(*new vector<TreeNode *>{node1_1, node2_1, node3_1});
+
+    TreeNode *node1_2 = new TreeNode(5, new TreeNode(3), new TreeNode(8));
+    TreeNode *node2_2 = new TreeNode(3, new TreeNode(2), new TreeNode(6));
+    TreeNode *result2 = solution.canMerge(*new vector<TreeNode *>{node1_2, node2_2});
+
+    TreeNode *node1_3 = new TreeNode(5, new TreeNode(4), nullptr);
+    TreeNode *node2_3 = new TreeNode(3);
+    TreeNode *result3 = solution.canMerge(*new vector<TreeNode *>{node1_3, node2_3});
+
+    TreeNode *node1_4 = new TreeNode(1, nullptr, new TreeNode(2));
+    TreeNode *node2_4 = new TreeNode(3, new TreeNode(1), nullptr);
+    TreeNode *node3_4 = new TreeNode(2, nullptr, new TreeNode(3));
+    TreeNode *result4 = solution.canMerge(*new vector<TreeNode *>{node1_4, node2_4, node3_4});
+}
