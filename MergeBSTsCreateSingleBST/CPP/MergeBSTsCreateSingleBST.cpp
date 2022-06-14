@@ -1,4 +1,5 @@
 // https://leetcode.com/problems/merge-bsts-to-create-single-bst/
+// not mine
 #include <vector>
 #include <unordered_map>
 #include <cmath>
@@ -21,201 +22,39 @@ class Solution
 public:
     TreeNode *canMerge(vector<TreeNode *> &trees)
     {
-        vector<bool> merged(trees.size(), false);
-        unordered_map<int, vector<TreeNode *>> leafMap;
-        unordered_map<TreeNode *, TreeNode *> rootMap;
-
-        mapLeaves(leafMap, trees);
-        mapRoots(rootMap, trees);
-
-        for (int i = 0; i < trees.size(); i++)
+        unordered_map<int, TreeNode *> m;
+        unordered_map<int, int> cnt;
+        for (auto &t : trees)
         {
-            TreeNode *tree = trees[i];
-            int val = tree->val;
-            int max = getMax(tree);
-            int min = getMin(tree);
-
-            if (leafMap.find(val) == leafMap.end())
-            {
-                continue;
-            }
-
-            int removeIndex = -1;
-            int diff = INT32_MAX;
-            for (int j = 0; j < leafMap[val].size(); j++)
-            {
-                TreeNode *parent = leafMap[val][j];
-                if (parent == tree)
-                {
-                    continue;
-                }
-
-                if (parent->left == nullptr && parent->right == nullptr)
-                {
-                    removeIndex = j;
-                    break;
-                }
-
-                int newDiff = abs(parent->val - val);
-                if (newDiff >= diff)
-                {
-                    continue;
-                }
-
-                if (parent->left != nullptr && parent->left->val == val)
-                {
-                    if (max < rootMap[parent->left]->val)
-                    {
-                        removeIndex = j;
-                        diff = newDiff;
-                    }
-                }
-                else if (parent->right != nullptr && parent->right->val == val)
-                {
-                    if (min > rootMap[parent->right]->val)
-                    {
-                        removeIndex = j;
-                        diff = newDiff;
-                    }
-                }
-            }
-
-            if (removeIndex >= 0)
-            {
-                merged[i] = true;
-                TreeNode *t = leafMap[val][removeIndex];
-                leafMap[val].erase(leafMap[val].begin() + removeIndex);
-
-                if (t->left != nullptr && t->left->val == val)
-                {
-                    t->left = tree;
-                }
-                else if (t->right != nullptr && t->right->val == val)
-                {
-                    t->right = tree;
-                }
-
-                if (tree->left != nullptr)
-                {
-                    rootMap[tree->left] = t;
-                }
-
-                if (tree->right != nullptr)
-                {
-                    rootMap[tree->right] = t;
-                }
-            }
+            m[t->val] = t;
+            ++cnt[t->val];
+            ++cnt[t->left ? t->left->val : 0];
+            ++cnt[t->right ? t->right->val : 0];
         }
-
-        TreeNode *answer = nullptr;
-        for (int i = 0; i < merged.size(); i++)
-        {
-            if (!merged[i])
-            {
-                if (answer != nullptr)
-                {
-                    return nullptr;
-                }
-
-                answer = trees[i];
-            }
-        }
-
-        return answer;
+        for (auto &t : trees)
+            if (cnt[t->val] == 1)
+                return traverse(t, m) && m.size() == 1 ? t : nullptr;
+        return nullptr;
     }
 
 private:
-    int getMax(TreeNode *tree)
+    bool traverse(TreeNode *r, unordered_map<int, TreeNode *> &m, int min_left = INT_MIN, int max_right = INT_MAX)
     {
-        if (tree->right != nullptr)
+        if (r == nullptr)
+            return true;
+        if (r->val <= min_left || r->val >= max_right)
+            return false;
+        if (r->left == r->right)
         {
-            return getMax(tree->right);
-        }
-
-        return tree->val;
-    }
-
-    int getMin(TreeNode *tree)
-    {
-        if (tree->left != nullptr)
-        {
-            return getMin(tree->left);
-        }
-
-        return tree->val;
-    }
-
-    void mapRoots(unordered_map<TreeNode *, TreeNode *> &rootMap, vector<TreeNode *> &trees)
-    {
-        for (TreeNode *tree : trees)
-        {
-            if (tree->left != nullptr)
+            auto it = m.find(r->val);
+            if (it != end(m) && r != it->second)
             {
-                rootMap.emplace(tree->left, tree);
-            }
-
-            if (tree->right != nullptr)
-            {
-                rootMap.emplace(tree->right, tree);
+                r->left = it->second->left;
+                r->right = it->second->right;
+                m.erase(it);
             }
         }
-    }
-
-    void mapLeaves(unordered_map<int, vector<TreeNode *>> &leafMap, vector<TreeNode *> &trees)
-    {
-        for (TreeNode *tree : trees)
-        {
-            if (tree->left == nullptr && tree->right == nullptr)
-            {
-                if (leafMap.find(tree->val) == leafMap.end())
-                {
-                    leafMap.emplace(tree->val, vector<TreeNode *>{tree});
-                }
-                else
-                {
-                    leafMap[tree->val].push_back(tree);
-                }
-
-                continue;
-            }
-
-            if (tree->left != nullptr)
-            {
-                mapLeaves(leafMap, tree->left, tree);
-            }
-
-            if (tree->right != nullptr)
-            {
-                mapLeaves(leafMap, tree->right, tree);
-            }
-        }
-    }
-
-    void mapLeaves(unordered_map<int, vector<TreeNode *>> &leafMap, TreeNode *tree, TreeNode *parent)
-    {
-        if (tree->left == nullptr && tree->right == nullptr)
-        {
-            if (leafMap.find(tree->val) == leafMap.end())
-            {
-                leafMap.emplace(tree->val, vector<TreeNode *>{parent});
-            }
-            else
-            {
-                leafMap[tree->val].push_back(parent);
-            }
-
-            return;
-        }
-
-        if (tree->left != nullptr)
-        {
-            mapLeaves(leafMap, tree->left, tree);
-        }
-
-        if (tree->right != nullptr)
-        {
-            mapLeaves(leafMap, tree->right, tree);
-        }
+        return traverse(r->left, m, min_left, r->val) && traverse(r->right, m, r->val, max_right);
     }
 };
 
@@ -240,4 +79,14 @@ int main()
     TreeNode *node2_4 = new TreeNode(3, new TreeNode(1), nullptr);
     TreeNode *node3_4 = new TreeNode(2, nullptr, new TreeNode(3));
     TreeNode *result4 = solution.canMerge(*new vector<TreeNode *>{node1_4, node2_4, node3_4});
+
+    TreeNode *node1_5 = new TreeNode(4, new TreeNode(1), nullptr);
+    TreeNode *node2_5 = new TreeNode(1, nullptr, new TreeNode(2));
+    TreeNode *node3_5 = new TreeNode(2, nullptr, new TreeNode(3));
+    TreeNode *result5 = solution.canMerge(*new vector<TreeNode *>{node1_5, node2_5, node3_5});
+
+    TreeNode *node1_6 = new TreeNode(3, new TreeNode(1), nullptr);
+    TreeNode *node2_6 = new TreeNode(1, nullptr, new TreeNode(2));
+    TreeNode *node3_6 = new TreeNode(2, new TreeNode(1), nullptr);
+    TreeNode *result6 = solution.canMerge(*new vector<TreeNode *>{node1_6, node2_6, node3_6});
 }
