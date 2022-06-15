@@ -11,9 +11,8 @@ public:
   vector<int> nextGreaterElements(vector<int> &nums)
   {
     unordered_map<int, vector<int>> indeces;
-    indeces[nums[0]] = vector<int>{0};
 
-    for (int i = 1; i < nums.size(); i++)
+    for (int i = 0; i < nums.size(); i++)
     {
       int num = nums[i];
       if (indeces.find(num) == indeces.end())
@@ -25,26 +24,39 @@ public:
     }
 
     stack<int> leasts;
-    leasts.push(nums[0]);
-    vector<int> answer(nums.size(), -1);
+    vector<int> answer(nums.size(), INT32_MIN);
 
-    for (int i = 1; i < nums.size(); i++)
+    for (int i = 0; i < nums.size() * 2; i++)
     {
-      int num = nums[i];
+      int num = nums[i % nums.size()];
       if (leasts.empty() || num < leasts.top())
       {
         leasts.push(num);
       }
-
-      while (!leasts.empty() && num > leasts.top())
+      else
       {
-        int currentLeast = leasts.top();
-        leasts.pop();
-
-        for (int index : indeces[currentLeast])
+        while (!leasts.empty() && num > leasts.top())
         {
-          answer[index] = num;
+          int currentLeast = leasts.top();
+          leasts.pop();
+
+          for (int index : indeces[currentLeast])
+          {
+            if (answer[index] == INT32_MIN && index < i)
+            {
+              answer[index] = num;
+            }
+          }
         }
+        leasts.push(num);
+      }
+    }
+
+    for (int i = 0; i < answer.size(); i++)
+    {
+      if (answer[i] == INT32_MIN)
+      {
+        answer[i] = -1;
       }
     }
 
@@ -58,4 +70,7 @@ int main()
 
   vector<int> result1 = solution.nextGreaterElements(*new vector<int>{1, 2, 1});
   vector<int> result2 = solution.nextGreaterElements(*new vector<int>{1, 2, 3, 4, 3});
+  vector<int> result3 = solution.nextGreaterElements(*new vector<int>{5, 4, 3, 2, 6, 1});
+  vector<int> result4 = solution.nextGreaterElements(*new vector<int>{100, 1, 11, 1, 120, 111, 123, 1, -1, -100});
+  vector<int> result5 = solution.nextGreaterElements(*new vector<int>{3, 2, -3, -1, 1, -3, 1, -1});
 }
