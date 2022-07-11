@@ -1,5 +1,7 @@
 // https://leetcode.com/problems/shortest-path-in-binary-matrix/
+// not mine: https://leetcode.com/problems/shortest-path-in-binary-matrix/discuss/312814/simple-BFS-C%2B%2B
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -8,10 +10,17 @@ class Solution
 public:
   int shortestPathBinaryMatrix(vector<vector<int>> &grid)
   {
-    vector<vector<bool>> visited(grid.size(), vector<bool>(grid[0].size(), false));
+    if (grid.size() == 0 || grid[0].size() == 0)
+    {
+      return -1;
+    }
 
-    int result = dfs(0, 0, grid, visited);
-    return result == INT32_MAX ? -1 : result;
+    if (grid[0][0] != 0 || grid[grid.size() - 1][grid[0].size() - 1] != 0)
+    {
+      return -1;
+    }
+
+    return bfs(grid);
   }
 
 private:
@@ -25,43 +34,38 @@ private:
       vector<int>{1, -1},
       vector<int>{-1, -1}};
 
-  int dfs(int x, int y, vector<vector<int>> &grid, vector<vector<bool>> &visited)
+  int bfs(vector<vector<int>> &grid)
   {
-    if (x == grid.size() - 1 && y == grid[0].size() - 1)
+    queue<pair<int, int>> q;
+    q.push(make_pair(0, 0));
+    grid[0][0] = 1;
+
+    while (!q.empty())
     {
-      return grid[x][y] == 1 ? INT32_MAX : 1;
-    }
+      auto current = q.front();
+      q.pop();
+      int x = current.first;
+      int y = current.second;
 
-    visited[x][y] = true;
-
-    if (grid[x][y] == 1)
-    {
-      return INT32_MAX;
-    }
-
-    int path = INT32_MAX;
-
-    for (vector<int> direction : directions)
-    {
-      int newX = x + direction[0];
-      int newY = y + direction[1];
-
-      if (newX < 0 || newY < 0 || newX >= grid.size() || newY >= grid[0].size())
+      if (x == grid.size() - 1 && y == grid[0].size() - 1)
       {
-        continue;
+        return grid[x][y];
       }
 
-      if (visited[newX][newY])
+      for (auto direction : directions)
       {
-        continue;
-      }
+        int newX = x + direction[0];
+        int newY = y + direction[1];
 
-      path = min(path, dfs(newX, newY, grid, visited));
+        if (newX >= 0 && newX < grid.size() && newY >= 0 && newY < grid[0].size() && grid[newX][newY] == 0)
+        {
+          q.push(make_pair(newX, newY));
+          grid[newX][newY] = grid[x][y] + 1;
+        }
+      }
     }
 
-    visited[x][y] = false;
-
-    return path == INT32_MAX ? path : path + 1;
+    return -1;
   }
 };
 
@@ -79,4 +83,16 @@ int main()
   int result3 = solution.shortestPathBinaryMatrix(*new vector<vector<int>>{vector<int>{1, 0, 0},
                                                                            vector<int>{1, 1, 0},
                                                                            vector<int>{1, 1, 0}});
+
+  int result4 = solution.shortestPathBinaryMatrix(*new vector<vector<int>>{vector<int>{0, 0, 1, 1, 0, 0},
+                                                                           vector<int>{0, 0, 0, 0, 1, 1},
+                                                                           vector<int>{1, 0, 1, 1, 0, 0},
+                                                                           vector<int>{0, 0, 1, 1, 0, 0},
+                                                                           vector<int>{1, 0, 0, 0, 0, 0},
+                                                                           vector<int>{1, 0, 1, 0, 0, 0}}); // 8
+
+  int result5 = solution.shortestPathBinaryMatrix(*new vector<vector<int>>{vector<int>{0, 0, 0, 1},
+                                                                           vector<int>{0, 0, 1, 0},
+                                                                           vector<int>{0, 1, 0, 0},
+                                                                           vector<int>{1, 0, 0, 0}}); // 4
 }
