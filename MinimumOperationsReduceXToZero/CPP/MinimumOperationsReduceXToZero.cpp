@@ -8,39 +8,68 @@ class Solution
 public:
   int minOperations(vector<int> &nums, int x)
   {
-    return getMinOperations(nums, x, 0, nums.size() - 1);
+    vector<int> leftTotals(nums.size(), 0);
+    vector<int> rightTotals(nums.size(), 0);
+
+    leftTotals[0] = nums[0];
+    rightTotals[0] = nums[nums.size() - 1];
+
+    int leftLimit = 0;
+    int rightLimit = 0;
+
+    for (int i = 1; i < nums.size(); i++)
+    {
+      int start = i;
+      int end = (nums.size() - 1) - i;
+
+      leftTotals[i] = nums[start] + nums[start - 1];
+      rightTotals[i] = nums[end] + nums[end + 1];
+
+      if (leftTotals[i] <= x)
+      {
+        leftLimit = i;
+      }
+
+      if (rightTotals[i] <= x)
+      {
+        rightLimit = i;
+      }
+    }
+
+    int answer = INT32_MAX;
+
+    while (leftLimit >= 0 || rightLimit >= 0)
+    {
+      if (leftLimit >= 0)
+      {
+      }
+    }
+
+    return answer == INT32_MAX ? -1 : answer;
   }
 
 private:
-  int getMinOperations(vector<int> &nums, int goal, int left, int right, int currentSum = 0)
+  int binarySearch(vector<int> &collection, int goal, int start, int end)
   {
-    if (left > right)
+    if (start >= end)
     {
-      return -1;
+      return collection[start] == goal ? start : -1;
     }
 
-    int operations = (nums.size() - 1) - (right - left);
-    int leftSum = currentSum + nums[left];
-    int rightSum = currentSum + nums[right];
+    int index = (end + start) / 2;
+    int result = collection[index];
 
-    if (leftSum == goal || rightSum == goal)
+    if (result == goal)
     {
-      return operations + 1;
+      return index;
     }
 
-    int deepLeft = leftSum > goal ? -1 : getMinOperations(nums, goal, left + 1, right, leftSum);
-    int deepRight = rightSum > goal ? -1 : getMinOperations(nums, goal, left, right - 1, rightSum);
-
-    if (deepLeft == -1)
+    if (result < goal)
     {
-      return deepRight;
-    }
-    else if (deepRight == -1)
-    {
-      return deepLeft;
+      return binarySearch(collection, goal, start, index);
     }
 
-    return min(deepLeft, deepRight);
+    return binarySearch(collection, goal, index, end);
   }
 };
 
