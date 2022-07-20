@@ -22,8 +22,8 @@ public:
       int start = i;
       int end = (nums.size() - 1) - i;
 
-      leftTotals[i] = nums[start] + nums[start - 1];
-      rightTotals[i] = nums[end] + nums[end + 1];
+      leftTotals[i] = nums[start] + leftTotals[start - 1];
+      rightTotals[i] = nums[end] + rightTotals[start - 1];
 
       if (leftTotals[i] <= x)
       {
@@ -36,13 +36,51 @@ public:
       }
     }
 
+    if (leftTotals[leftTotals.size() - 1] < x)
+    {
+      return -1;
+    }
+
     int answer = INT32_MAX;
 
     while (leftLimit >= 0 || rightLimit >= 0)
     {
-      if (leftLimit >= 0)
+      if (leftLimit >= 0 && leftTotals[leftLimit] == x)
       {
+        answer = min(answer, leftLimit + 1);
       }
+
+      if (rightLimit >= 0 && rightTotals[rightLimit] == x)
+      {
+        answer = min(answer, rightLimit + 1);
+      }
+
+      if (leftLimit >= 0 && rightLimit >= 0)
+      {
+        int needRight = x - leftTotals[leftLimit];
+        if (needRight > 0)
+        {
+          int rightIndex = binarySearch(rightTotals, needRight, 0, rightLimit);
+          if (rightIndex < INT32_MAX)
+          {
+            answer = min(answer, leftLimit + rightIndex + 2);
+          }
+        }
+
+        int needLeft = x - rightTotals[rightLimit];
+        if (needLeft > 0)
+        {
+          int leftIndex = binarySearch(leftTotals, needLeft, 0, leftLimit);
+
+          if (leftIndex < INT32_MAX)
+          {
+            answer = min(answer, rightLimit + leftIndex + 2);
+          }
+        }
+      }
+
+      leftLimit = leftLimit < 0 ? leftLimit : leftLimit - 1;
+      rightLimit = rightLimit < 0 ? rightLimit : rightLimit - 1;
     }
 
     return answer == INT32_MAX ? -1 : answer;
@@ -53,7 +91,7 @@ private:
   {
     if (start >= end)
     {
-      return collection[start] == goal ? start : -1;
+      return collection[start] == goal ? start : INT32_MAX;
     }
 
     int index = (end + start) / 2;
@@ -64,12 +102,12 @@ private:
       return index;
     }
 
-    if (result < goal)
+    if (result >= goal)
     {
       return binarySearch(collection, goal, start, index);
     }
 
-    return binarySearch(collection, goal, index, end);
+    return binarySearch(collection, goal, index + 1, end);
   }
 };
 
@@ -78,7 +116,8 @@ int main()
   Solution solution;
 
   int result1 = solution.minOperations(*new vector<int>{1, 1, 4, 2, 3}, 5);
-  int result2 = solution.minOperations(*new vector<int>{5, 6, 7, 8, 9}, 4);
-  int result3 = solution.minOperations(*new vector<int>{3, 2, 20, 1, 1, 3}, 10);
+  int result2 = solution.minOperations(*new vector<int>{5, 6, 7, 8, 9}, 4);      // -1
+  int result3 = solution.minOperations(*new vector<int>{3, 2, 20, 1, 1, 3}, 10); // 5
   int result4 = solution.minOperations(*new vector<int>{10, 1, 1, 1, 1, 1}, 5);
+  int result5 = solution.minOperations(*new vector<int>{1, 1}, 3); // -1
 }
