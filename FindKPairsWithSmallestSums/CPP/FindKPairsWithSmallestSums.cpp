@@ -1,37 +1,37 @@
 // https://leetcode.com/problems/find-k-pairs-with-smallest-sums/
 #include <vector>
-#include <queue>
+#include <stack>
 
 using namespace std;
-
-class Compare
-{
-public:
-  bool operator()(vector<int> pair1, vector<int> pair2)
-  {
-    return pair1[0] + pair1[1] > pair2[0] + pair2[1];
-  }
-};
 
 class Solution
 {
 public:
   vector<vector<int>> kSmallestPairs(vector<int> &nums1, vector<int> &nums2, int k)
   {
-    priority_queue<vector<int>, vector<vector<int>>, Compare> pq;
-    for (int i = 0; i < nums1.size(); i++)
+    stack<vector<int>> stk;
+    for (int i = nums1.size() - 1; i >= 0; i--)
     {
-      for (int j = 0; j < nums2.size(); j++)
-      {
-        pq.push(vector<int>{nums1[i], nums2[j]});
-      }
+      stk.push(vector<int>{i, 0});
     }
 
     vector<vector<int>> answer;
-    while (k-- > 0 && !pq.empty())
+    while (k-- > 0)
     {
-      answer.push_back(pq.top());
-      pq.pop();
+      stack<vector<int>> tempStk;
+      while (!stk.empty())
+      {
+      }
+
+      while (!tempStk.empty())
+      {
+        if (tempStk.top()[1] < nums2.size())
+        {
+          stk.push(tempStk.top());
+        }
+
+        tempStk.pop();
+      }
     }
 
     return answer;
