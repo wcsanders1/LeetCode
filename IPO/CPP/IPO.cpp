@@ -61,16 +61,25 @@ public:
     int answer = w;
     while (k-- > 0)
     {
-      while (max_profit_queue.top().capital > answer)
+      while (!min_capital_queue.empty() && min_capital_queue.top().capital <= answer)
+      {
+        max_profit_queue.push(min_capital_queue.top());
+        min_capital_queue.pop();
+      }
+
+      while (!max_profit_queue.empty() && max_profit_queue.top().capital > answer)
       {
         min_capital_queue.push(max_profit_queue.top());
         max_profit_queue.pop();
-
-        if (max_profit_queue.empty())
-        {
-          return answer;
-        }
       }
+
+      if (max_profit_queue.empty())
+      {
+        return answer;
+      }
+
+      answer += max_profit_queue.top().profit;
+      max_profit_queue.pop();
     }
 
     return answer;
@@ -82,4 +91,5 @@ int main()
   Solution solution;
 
   int result1 = solution.findMaximizedCapital(2, 0, *new vector<int>{1, 2, 3}, *new vector<int>{0, 1, 1});
+  int result2 = solution.findMaximizedCapital(3, 0, *new vector<int>{1, 2, 3}, *new vector<int>{0, 1, 2});
 }
