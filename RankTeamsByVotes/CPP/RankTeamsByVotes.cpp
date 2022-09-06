@@ -2,51 +2,93 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
+#include <algorithm>
 
 using namespace std;
+
+struct Team
+{
+  char team;
+  vector<int> ranks;
+  Team()
+  {
+    team = '\0';
+    ranks = vector<int>();
+  }
+
+  Team(char t, int size)
+  {
+    team = t;
+    ranks = vector<int>(size, 0);
+  }
+};
+
+struct TeamSorter
+{
+  inline bool operator()(const Team &team1, const Team &team2)
+  {
+    for (int i = 0; i < team1.ranks.size(); i++)
+    {
+      if (team1.ranks[i] > team2.ranks[i])
+      {
+        return true;
+      }
+
+      if (team1.ranks[i] < team2.ranks[i])
+      {
+        return false;
+      }
+    }
+
+    return team1.team < team2.team;
+  }
+};
 
 class Solution
 {
 public:
   string rankTeams(vector<string> &votes)
   {
-    vector<unordered_set<char>> positions = vector<unordered_set<char>>(votes.size(), unordered_set<char>());
-    unordered_map<char, vector<int>> position_map = unordered_map<char, vector<int>>();
-    unordered_map<char, bool> used = unordered_map<char, bool>();
+    unordered_map<char, Team> teams;
 
     for (string vote : votes)
     {
       for (int i = 0; i < vote.size(); i++)
       {
         char team = vote[i];
-
-        if (position_map.count(team) == 0)
+        if (teams.count(team) == 0)
         {
-          position_map[team] = vector<int>(vote.size(), 0);
-          used[team] = false;
+          teams[team] = Team(team, vote.size());
         }
 
-        position_map[team][i]++;
-        positions[i].insert(team);
+        teams[team].ranks[i]++;
       }
     }
 
-    string answer = "";
-
-    for (int i = 0; i < positions.size(); i++)
+    vector<Team> ranks = vector<Team>();
+    for (auto kv : teams)
     {
-      unordered_map<char, int> score;
-      for (char team : positions[i])
-      {
-        if (!used[team])
-        {
-          used[team] = true;
-          score[team] = 0;
-        }
-      }
-        }
+      ranks.push_back(kv.second);
+    }
+
+    sort(ranks.begin(), ranks.end(), TeamSorter());
+
+    string answer = "";
+    for (Team rank : ranks)
+    {
+      answer += rank.team;
+    }
 
     return answer;
   }
 };
+
+int main()
+{
+  Solution solution;
+
+  string result1 = solution.rankTeams(*new vector<string>{"ABC", "ACB", "ABC", "ACB", "ACB"});
+  string result2 = solution.rankTeams(*new vector<string>{"WXYZ", "XYZW"});
+  string result3 = solution.rankTeams(*new vector<string>{"ZMNAGUEDSJYLBOPHRQICWFXTVK"});
+  string result4 = solution.rankTeams(*new vector<string>{"ABC", "ACB", "ABC", "ACB"});
+}
