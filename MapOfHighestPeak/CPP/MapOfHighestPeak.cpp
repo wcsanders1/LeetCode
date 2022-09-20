@@ -1,4 +1,5 @@
 // https://leetcode.com/problems/map-of-highest-peak/
+// NOT MINE: https://leetcode.com/problems/map-of-highest-peak/discuss/1076933/C%2B%2B-with-picture-(of-Mars)
 #include <vector>
 #include <queue>
 
@@ -9,67 +10,58 @@ class Solution
 public:
   vector<vector<int>> highestPeak(vector<vector<int>> &isWater)
   {
-    vector<vector<int>> answer = vector<vector<int>>(isWater.size(), vector<int>(isWater[0].size(), INT32_MAX));
+    vector<pair<int, int>> q;
+    int rowSize = isWater.size();
+    int colSize = isWater[0].size();
 
-    for (int row = 0; row < isWater.size(); row++)
+    for (int row = 0; row < rowSize; row++)
     {
-      for (int col = 0; col < isWater[row].size(); col++)
+      for (int col = 0; col < colSize; col++)
       {
         if (isWater[row][col] == 1)
         {
-          doCorrection(answer, row, col);
+          isWater[row][col] = 0;
+          q.push_back({row, col});
+        }
+        else
+        {
+          isWater[row][col] = -1;
         }
       }
     }
 
-    return answer;
+    int max = 1;
+    while (!q.empty())
+    {
+      vector<pair<int, int>> q1;
+      int size = q.size();
+      for (int i = 0; i < size; i++)
+      {
+        auto cell = q[i];
+        int row = cell.first;
+        int col = cell.second;
+
+        for (auto d : directions)
+        {
+          int r = row + d[0];
+          int c = col + d[1];
+
+          if (r >= 0 && r < rowSize && c >= 0 && c < colSize && isWater[r][c] == -1)
+          {
+            isWater[r][c] = max;
+            q1.push_back({r, c});
+          }
+        }
+      }
+      swap(q, q1);
+      max++;
+    }
+
+    return isWater;
   }
 
 private:
   const vector<vector<int>> directions = vector<vector<int>>{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-
-  void doCorrection(vector<vector<int>> &matrix, int row, int col)
-  {
-    matrix[row][col] = 0;
-    int max = 1;
-
-    queue<vector<int>> q;
-    fillQueue(q, matrix, row, col, max);
-
-    while (!q.empty())
-    {
-      int size = q.size();
-      for (int i = 0; i < size; i++)
-      {
-        vector<int> p = q.front();
-        q.pop();
-
-        int r = p[0];
-        int c = p[1];
-        matrix[r][c] = max;
-        fillQueue(q, matrix, r, c, max + 1);
-      }
-
-      max++;
-    }
-  }
-
-  void fillQueue(queue<vector<int>> &q, vector<vector<int>> &matrix, int row, int col, int max)
-  {
-    for (auto d : directions)
-    {
-      int r = row + d[0];
-      int c = col + d[1];
-
-      if (r < matrix.size() && r >= 0 && c < matrix[0].size() && c >= 0)
-      {
-        if (matrix[r][c] > max)
-        {
-          q.push({r, c});
-        }
-      }
-    }
-  }
 };
 
 int main()
