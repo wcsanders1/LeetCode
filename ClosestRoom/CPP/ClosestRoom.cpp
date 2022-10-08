@@ -60,8 +60,8 @@ int main()
 {
   Solution solution;
 
-  // auto result1 = solution.closestRoom(*new vector<vector<int>>{{2, 2}, {1, 2}, {3, 2}}, *new vector<vector<int>>{{3, 1}, {3, 3}, {5, 2}});
-  // auto result2 = solution.closestRoom(*new vector<vector<int>>{{1, 4}, {2, 3}, {3, 5}, {4, 1}, {5, 2}}, *new vector<vector<int>>{{2, 3}, {2, 4}, {2, 5}});
+  auto result1 = solution.closestRoom(*new vector<vector<int>>{{2, 2}, {1, 2}, {3, 2}}, *new vector<vector<int>>{{3, 1}, {3, 3}, {5, 2}});
+  auto result2 = solution.closestRoom(*new vector<vector<int>>{{1, 4}, {2, 3}, {3, 5}, {4, 1}, {5, 2}}, *new vector<vector<int>>{{2, 3}, {2, 4}, {2, 5}});
   auto result3 = solution.closestRoom(*new vector<vector<int>>{{23, 22}, {6, 20}, {15, 6}, {22, 19}, {2, 10}, {21, 4}, {10, 18}, {16, 1}, {12, 7}, {5, 22}},
                                       *new vector<vector<int>>{{12, 5}, {15, 15}, {21, 6}, {15, 1}, {23, 4}, {15, 11}, {1, 24}, {3, 19}, {25, 8}, {18, 6}});
 }
