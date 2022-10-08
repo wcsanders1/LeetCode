@@ -1,7 +1,8 @@
 // https://leetcode.com/problems/closest-room/
+// NOT MINE: https://leetcode.com/problems/closest-room/discuss/1186023/C%2B%2BJava-Sort-Queries
 #include <vector>
-#include <unordered_map>
 #include <algorithm>
+#include <set>
 
 using namespace std;
 
@@ -33,160 +34,25 @@ class Solution
 public:
   vector<int> closestRoom(vector<vector<int>> &rooms, vector<vector<int>> &queries)
   {
-    unordered_map<int, RoomSize> sizeMap;
-    for (vector<int> room : rooms)
+    auto by_size_desc = [](const auto &a, const auto &b)
+    { return a[1] > b[1]; };
+    vector<int> res(queries.size());
+    for (int i = 0; i < queries.size(); ++i)
+      queries[i].push_back(i);
+    sort(begin(rooms), end(rooms), by_size_desc);
+    sort(begin(queries), end(queries), by_size_desc);
+    set<int> ids;
+    for (int i = 0, j = 0; i < queries.size(); ++i)
     {
-      int id = room[0];
-      int size = room[1];
-      if (sizeMap.count(size) == 0)
-      {
-        sizeMap[size] = RoomSize(size);
-      }
-      sizeMap[size].idsThisSize.push_back(id);
+      for (; j < rooms.size() && rooms[j][1] >= queries[i][1]; ++j)
+        ids.insert(rooms[j][0]);
+      auto it = ids.lower_bound(queries[i][0]);
+      int id1 = it == begin(ids) ? -1 : *(prev(it));
+      int id2 = it == end(ids) ? -1 : *it;
+      res[queries[i][2]] = min(id1, id2) == -1 ? max(id1, id2) : abs(queries[i][0] - id1) <= abs(queries[i][0] - id2) ? id1
+                                                                                                                      : id2;
     }
-
-    vector<RoomSize> sizes;
-    vector<int> ids;
-    for (auto kv : sizeMap)
-    {
-      for (int id : kv.second.idsThisSize)
-      {
-        ids.push_back(id);
-      }
-      sizes.push_back(kv.second);
-    }
-
-    sort(ids.begin(), ids.end());
-    sort(sizes.begin(), sizes.end(), SizeSorter());
-
-    sizes[0].idsAtLeastThisSize = ids;
-    for (int i = 1; i < sizes.size(); i++)
-    {
-      RoomSize prev = sizes[i - 1];
-      vector<int> v = vector<int>(prev.idsAtLeastThisSize.begin(), prev.idsAtLeastThisSize.end());
-      for (int id : prev.idsThisSize)
-      {
-        int index = getLeastIndex(v, id, 0, v.size() - 1);
-        v.erase(v.begin() + index);
-      }
-
-      sizes[i].idsAtLeastThisSize = v;
-    }
-
-    vector<int> answer = vector(queries.size(), -1);
-    for (int i = 0; i < queries.size(); i++)
-    {
-      vector<int> q = queries[i];
-      int bestId = q[0];
-      int minSize = q[1];
-
-      if (sizes[sizes.size() - 1].size < minSize)
-      {
-        continue;
-      }
-
-      int sizeIndex = getIndex(sizes, minSize, 0, sizes.size() - 1);
-
-      int idIndex = getIndex(sizes[sizeIndex].idsAtLeastThisSize, bestId, 0, sizes[sizeIndex].idsAtLeastThisSize.size() - 1);
-      if (idIndex == -1)
-      {
-        continue;
-      }
-
-      answer[i] = sizes[sizeIndex].idsAtLeastThisSize[idIndex];
-    }
-
-    return answer;
-  }
-
-private:
-  int getLeastIndex(vector<int> &ints, int value, int start, int end)
-  {
-    if (start >= end)
-    {
-      return start;
-    }
-
-    int mid = (start + end) / 2;
-    int v = ints[mid];
-    if (v == value)
-    {
-      return mid;
-    }
-
-    if (v > value)
-    {
-      return getLeastIndex(ints, value, start, mid - 1);
-    }
-
-    return getLeastIndex(ints, value, mid + 1, end);
-  }
-
-  int getIndex(vector<int> &ints, int value, int start, int end)
-  {
-    if (start >= end)
-    {
-      int index = -1;
-      int v = INT32_MAX;
-      for (int i = start - 1; i <= start + 1; i++)
-      {
-        if (i >= 0 && i < ints.size())
-        {
-          int a = abs(value - ints[i]);
-          if (a < v)
-          {
-            v = a;
-            index = i;
-          }
-        }
-      }
-
-      return index;
-    }
-
-    int mid = (start + end) / 2;
-    int v = ints[mid];
-    if (v == value)
-    {
-      return mid;
-    }
-
-    if (v > value)
-    {
-      return getIndex(ints, value, start, mid - 1);
-    }
-
-    return getIndex(ints, value, mid + 1, end);
-  }
-
-  int getIndex(vector<RoomSize> &sizes, int value, int start, int end)
-  {
-    if (start >= end)
-    {
-      for (int i = start; i < sizes.size(); i++)
-      {
-        if (sizes[i].size >= value)
-        {
-          return i;
-        }
-      }
-
-      return sizes.size() - 1;
-    }
-
-    int mid = (start + end) / 2;
-    RoomSize v = sizes[mid];
-    if (v.size == value)
-    {
-      return mid;
-    }
-
-    if (v.size > value)
-    {
-      return getIndex(sizes, value, start, mid - 1);
-    }
-
-    return getIndex(sizes, value, mid + 1, end);
+    return res;
   }
 };
 
@@ -194,8 +60,8 @@ int main()
 {
   Solution solution;
 
-  auto result1 = solution.closestRoom(*new vector<vector<int>>{{2, 2}, {1, 2}, {3, 2}}, *new vector<vector<int>>{{3, 1}, {3, 3}, {5, 2}});
-  auto result2 = solution.closestRoom(*new vector<vector<int>>{{1, 4}, {2, 3}, {3, 5}, {4, 1}, {5, 2}}, *new vector<vector<int>>{{2, 3}, {2, 4}, {2, 5}});
+  // auto result1 = solution.closestRoom(*new vector<vector<int>>{{2, 2}, {1, 2}, {3, 2}}, *new vector<vector<int>>{{3, 1}, {3, 3}, {5, 2}});
+  // auto result2 = solution.closestRoom(*new vector<vector<int>>{{1, 4}, {2, 3}, {3, 5}, {4, 1}, {5, 2}}, *new vector<vector<int>>{{2, 3}, {2, 4}, {2, 5}});
   auto result3 = solution.closestRoom(*new vector<vector<int>>{{23, 22}, {6, 20}, {15, 6}, {22, 19}, {2, 10}, {21, 4}, {10, 18}, {16, 1}, {12, 7}, {5, 22}},
                                       *new vector<vector<int>>{{12, 5}, {15, 15}, {21, 6}, {15, 1}, {23, 4}, {15, 11}, {1, 24}, {3, 19}, {25, 8}, {18, 6}});
 }
