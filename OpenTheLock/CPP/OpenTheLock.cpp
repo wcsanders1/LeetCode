@@ -38,54 +38,19 @@ public:
         for (int i = 0; i < value.size(); i++)
         {
           string s = value;
-          if (value[i] == '0')
+          char c = s[i];
+          s[i] = c == '9' ? '0' : c + 1;
+          if (visited.find(s) == visited.end())
           {
-            s[i] = '1';
-            if (visited.find(s) == visited.end())
-            {
-              q.emplace(s);
-              visited.insert(s);
-            }
-
-            s[i] = '9';
-            if (visited.find(s) == visited.end())
-            {
-              q.emplace(s);
-              visited.insert(s);
-            }
+            q.emplace(s);
+            visited.insert(s);
           }
-          else if (value[i] == '9')
-          {
-            s[i] = '8';
-            if (visited.find(s) == visited.end())
-            {
-              q.emplace(s);
-              visited.insert(s);
-            }
 
-            s[i] = '0';
-            if (visited.find(s) == visited.end())
-            {
-              q.emplace(s);
-              visited.insert(s);
-            }
-          }
-          else
+          s[i] = c == '0' ? '9' : c - 1;
+          if (visited.find(s) == visited.end())
           {
-            char c = s[i];
-            s[i] = c + 1;
-            if (visited.find(s) == visited.end())
-            {
-              q.emplace(s);
-              visited.insert(s);
-            }
-
-            s[i] = c - 1;
-            if (visited.find(s) == visited.end())
-            {
-              q.emplace(s);
-              visited.insert(s);
-            }
+            q.emplace(s);
+            visited.insert(s);
           }
         }
       }
