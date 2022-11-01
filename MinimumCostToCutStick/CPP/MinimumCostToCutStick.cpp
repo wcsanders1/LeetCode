@@ -1,6 +1,8 @@
 // https://leetcode.com/problems/minimum-cost-to-cut-a-stick/
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
+#include <string>
 
 using namespace std;
 
@@ -10,31 +12,38 @@ public:
   int minCost(int n, vector<int> &cuts)
   {
     sort(cuts.begin(), cuts.end());
-    vector<vector<int>> dp = vector<vector<int>>(n, vector<int>(n, 0));
+    unordered_map<string, int> mem;
+    return minCost(cuts, mem, 0, n);
+  }
 
-    for (int j = 2; j < n; j++)
+private:
+  int minCost(vector<int> &cuts, unordered_map<string, int> &mem, int start, int end, int count = 0)
+  {
+    if (count > cuts.size())
     {
-      for (int i = j - 2; i >= 0; i--)
+      return 0;
+    }
+
+    string key = to_string(start) + "&" + to_string(end);
+    if (mem.count(key) != 0)
+    {
+      return mem[key];
+    }
+
+    int length = end - start;
+    int minimum = INT32_MAX;
+
+    for (int cut : cuts)
+    {
+      if (cut > start && cut < end)
       {
-        int m = INT32_MAX;
-        for (int cut : cuts)
-        {
-          if (cut >= j - 1 || cut <= i)
-          {
-            break;
-          }
-
-          m = min(m, dp[i][cut + 1] + dp[cut + 1][j]);
-        }
-
-        if (m < INT32_MAX)
-        {
-          dp[i][j] = m + j - i;
-        }
+        minimum = min(minimum, (minCost(cuts, mem, start, cut, count + 1) + minCost(cuts, mem, cut, end, count + 1) + length));
       }
     }
 
-    return dp[0][n - 1];
+    minimum = minimum == INT32_MAX ? 0 : minimum;
+    mem[key] = minimum;
+    return minimum;
   }
 };
 
@@ -43,4 +52,5 @@ int main()
   Solution solution;
 
   int result1 = solution.minCost(7, *new vector<int>{1, 3, 4, 5});
+  int result2 = solution.minCost(9, *new vector<int>{5, 6, 1, 4, 2});
 }
