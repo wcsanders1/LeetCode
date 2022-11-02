@@ -1,7 +1,7 @@
 // https://leetcode.com/problems/minimum-cost-to-cut-a-stick/
+// NOT MINE: https://leetcode.com/problems/minimum-cost-to-cut-a-stick/discuss/781074/JavaC%2B%2BPython-Merge-Stones
 #include <vector>
 #include <algorithm>
-#include <unordered_map>
 #include <string>
 
 using namespace std;
@@ -11,39 +11,26 @@ class Solution
 public:
   int minCost(int n, vector<int> &cuts)
   {
+    cuts.push_back(0);
+    cuts.push_back(n);
     sort(cuts.begin(), cuts.end());
-    unordered_map<string, int> mem;
-    return minCost(cuts, mem, 0, n);
-  }
 
-private:
-  int minCost(vector<int> &cuts, unordered_map<string, int> &mem, int start, int end, int count = 0)
-  {
-    if (count > cuts.size())
+    int size = cuts.size();
+    vector<vector<int>> dp = vector<vector<int>>(size, vector<int>(size, 0));
+
+    for (int d = 2; d < size; d++)
     {
-      return 0;
-    }
-
-    string key = to_string(start) + "&" + to_string(end);
-    if (mem.count(key) != 0)
-    {
-      return mem[key];
-    }
-
-    int length = end - start;
-    int minimum = INT32_MAX;
-
-    for (int cut : cuts)
-    {
-      if (cut > start && cut < end)
+      for (int i = 0; i < size - d; i++)
       {
-        minimum = min(minimum, (minCost(cuts, mem, start, cut, count + 1) + minCost(cuts, mem, cut, end, count + 1) + length));
+        dp[i][i + d] = INT32_MAX;
+        for (int m = i + 1; m < i + d; m++)
+        {
+          dp[i][i + d] = min(dp[i][i + d], dp[i][m] + dp[m][i + d] + cuts[i + d] - cuts[i]);
+        }
       }
     }
 
-    minimum = minimum == INT32_MAX ? 0 : minimum;
-    mem[key] = minimum;
-    return minimum;
+    return dp[0][size - 1];
   }
 };
 
