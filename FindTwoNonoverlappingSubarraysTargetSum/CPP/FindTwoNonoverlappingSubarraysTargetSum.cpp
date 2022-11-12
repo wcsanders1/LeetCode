@@ -14,20 +14,37 @@ public:
     int start = 0;
     int end = 0;
     int value = arr[0];
+    prefix[0] = value == target ? 1 : INT32_MAX;
     while (end < arr.size())
     {
-      if (value < target)
+      end++;
+      value += arr[end];
+      if (value > target)
       {
-        if (++end >= arr.size())
+        while (value > target && start <= end)
         {
-          break;
+          value -= arr[start++];
         }
-
-        value += arr[end];
       }
-      else if (value > target)
+
+      if (value == target)
       {
-            }
+        prefix[end] = min(prefix[end - 1], end - start + 1);
+      }
+      else
+      {
+        prefix[end] = prefix[end - 1];
+      }
     }
+
+    return 0;
   }
 };
+
+int main()
+{
+  Solution solution;
+
+  int result1 = solution.minSumOfLengths(*new vector<int>{3, 2, 2, 4, 3}, 3);       // 2
+  int result2 = solution.minSumOfLengths(*new vector<int>{1, 1, 1, 2, 2, 1, 1}, 4); // 6
+}
