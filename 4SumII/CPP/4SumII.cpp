@@ -11,20 +11,14 @@ public:
   {
     int size = nums1.size();
     vector<int> sums = vector<int>(size * size, 0);
+    unordered_map<int, int> nums;
     for (int i = 0; i < size; i++)
     {
       for (int j = 0; j < size; j++)
       {
         int index = (i * size) + j;
         sums[index] = nums1[i] + nums2[j];
-      }
-    }
 
-    unordered_map<int, int> nums;
-    for (int i = 0; i < size; i++)
-    {
-      for (int j = 0; j < size; j++)
-      {
         int sum = nums3[i] + nums4[j];
         if (nums.count(sum) == 0)
         {
