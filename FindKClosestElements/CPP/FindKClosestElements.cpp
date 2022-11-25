@@ -81,4 +81,5 @@ int main()
   auto result1 = solution.findClosestElements(*new vector<int>{1, 2, 3, 4, 5}, 4, 3);
   auto result2 = solution.findClosestElements(*new vector<int>{1, 2, 3, 4, 5}, 4, -1);
   auto result3 = solution.findClosestElements(*new vector<int>{1, 1, 1, 10, 10}, 1, 9);
+  auto result4 = solution.findClosestElements(*new vector<int>{1, 1, 2, 2, 2, 2, 2, 3, 3}, 3, 3);
 }
