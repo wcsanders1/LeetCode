@@ -1,110 +1,40 @@
 // https://leetcode.com/problems/maximum-performance-of-a-team/
+// NOT MINE: https://leetcode.com/problems/maximum-performance-of-a-team/discuss/539687/JavaC%2B%2BPython-Priority-Queue
 #include <vector>
 #include <queue>
+#include <algorithm>
 
 using namespace std;
-
-struct TeamMember
-{
-public:
-  int speed;
-  int efficiency;
-  int index;
-  bool used;
-
-  TeamMember(int s, int e, int i) : speed(s), efficiency(e), index(i), used(false) {}
-  TeamMember();
-};
-
-class MinSpeed
-{
-public:
-  bool operator()(TeamMember *t1, TeamMember *t2)
-  {
-    return t1->speed > t2->speed;
-  }
-};
-
-class MinEfficiency
-{
-public:
-  bool operator()(TeamMember *t1, TeamMember *t2)
-  {
-    return t1->efficiency > t2->efficiency;
-  }
-};
 
 class Solution
 {
 public:
   int maxPerformance(int n, vector<int> &speed, vector<int> &efficiency, int k)
   {
-    priority_queue<TeamMember *, vector<TeamMember *>, MinSpeed> q_speed;
-    priority_queue<TeamMember *, vector<TeamMember *>, MinEfficiency> q_efficiency;
-
-    long long total_speed = 0;
-
+    vector<pair<int, int>> ess(n);
     for (int i = 0; i < n; i++)
     {
-      int s = speed[i];
-      int e = efficiency[i];
-      total_speed += s;
-      TeamMember *tm = new TeamMember(s, e, i);
-      q_speed.push(tm);
-      q_efficiency.push(tm);
+      ess[i] = {efficiency[i], speed[i]};
     }
 
-    TeamMember *min_efficiency = q_efficiency.top();
-    q_efficiency.pop();
+    sort(rbegin(ess), rend(ess));
+    long long total_speed = 0;
+    long long answer = 0;
+    priority_queue<int, vector<int>, greater<int>> q;
 
-    int m = 1000000007;
-    int answer = (total_speed * min_efficiency->efficiency) % m;
-    while (n-- > 1)
+    for (auto &[e, s] : ess)
     {
-      while (!q_speed.empty() && q_speed.top()->used)
+      q.push(s);
+      total_speed += s;
+      if (q.size() > k)
       {
-        q_speed.pop();
+        total_speed -= q.top();
+        q.pop();
       }
-
-      while (!q_efficiency.empty() && q_efficiency.top()->used)
-      {
-        q_efficiency.pop();
-      }
-
-      auto next_s = q_speed.top();
-      auto next_e = q_efficiency.top();
-
-      if (next_s->index == min_efficiency->index)
-      {
-        total_speed -= min_efficiency->speed;
-        min_efficiency->used = true;
-        min_efficiency = next_e;
-        q_efficiency.pop();
-        int a = (total_speed * min_efficiency->efficiency) % m;
-        answer = n < k ? max(answer, a) : a;
-        continue;
-      }
-
-      int p1 = ((total_speed - next_s->speed) * min_efficiency->efficiency) % m;
-      int p2 = ((total_speed - min_efficiency->speed) * next_e->efficiency) % m;
-
-      if (p1 > p2)
-      {
-        answer = n < k ? max(answer, p1) : p1;
-        next_s->used = true;
-        total_speed -= next_s->speed;
-      }
-      else
-      {
-        answer = n < k ? max(answer, p2) : p2;
-        total_speed -= min_efficiency->speed;
-        min_efficiency->used = true;
-        min_efficiency = next_e;
-        q_efficiency.pop();
-      }
+      answer = max(answer, total_speed * e);
     }
 
-    return answer;
+    return answer % (int)(1000000007);
   }
 };
 
@@ -130,4 +60,7 @@ int main()
   int result6 = solution.maxPerformance(8,
                                         *new vector<int>{9, 9, 4, 6, 9, 7, 9, 8},
                                         *new vector<int>{1, 9, 1, 9, 8, 1, 10, 1}, 4); // 264
+  int result7 = solution.maxPerformance(2,
+                                        *new vector<int>{1, 1000},
+                                        *new vector<int>{2, 1}, 1); // 1000
 }
