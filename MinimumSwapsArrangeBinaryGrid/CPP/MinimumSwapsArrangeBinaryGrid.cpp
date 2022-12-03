@@ -1,4 +1,5 @@
 // https://leetcode.com/problems/minimum-swaps-to-arrange-a-binary-grid/
+// NOT MINE: https://leetcode.com/problems/minimum-swaps-to-arrange-a-binary-grid/discuss/768020/C%2B%2B-easy-solution-greedy-%2B-prove-%2B-example
 #include <vector>
 #include <stack>
 
@@ -10,54 +11,40 @@ public:
   int minSwaps(vector<vector<int>> &grid)
   {
     int size = grid.size();
-    for (int row = 0; row < size; row++)
+    vector<int> tailingZeros(size, 0);
+    for (int i = 0; i < size; i++)
     {
-      grid[row].push_back(0);
+      for (int j = size - 1; j >= 0; j--)
+      {
+        if (grid[i][j] != 0)
+        {
+          break;
+        }
+        tailingZeros[i]++;
+      }
     }
 
     int answer = 0;
-    for (int col = size - 1; col >= 0; col--)
+    for (int i = 0; i < size; i++)
     {
-      int maxOnes = size - col;
-      int onesCount = 0;
-      stack<int> swappableRows;
-      for (int row = size - 1; row >= 0; row--)
+      int k = i;
+      int required = size - 1 - i;
+      while (k < size && tailingZeros[k] < required)
       {
-        onesCount += grid[row][col];
-        if (onesCount > maxOnes)
-        {
-          return -1;
-        }
+        k++;
+      }
 
-        if (grid[row][col] == 0 && grid[row][size] == 0 && row >= col)
-        {
-          swappableRows.push(row);
-        }
+      if (k >= size)
+      {
+        return -1;
+      }
 
-        if (grid[row][col] == 1)
-        {
-          grid[row][size] = 1;
-          if (row < col)
-          {
-            if (!swappableRows.empty())
-            {
-              int swapIndex = swappableRows.top();
-              swappableRows.pop();
+      answer += k - i;
 
-              for (int t1 = row, t2 = row + 1; t2 <= swapIndex; t1++, t2++)
-              {
-                vector<int> temp = grid[t1];
-                grid[t1] = grid[t2];
-                grid[t2] = temp;
-                answer++;
-              }
-            }
-            else
-            {
-              return -1;
-            }
-          }
-        }
+      while (k > i)
+      {
+        tailingZeros[k] = tailingZeros[k - 1];
+        k--;
       }
     }
 
@@ -74,13 +61,7 @@ int main()
   int result3 = solution.minSwaps(*new vector<vector<int>>{{1, 0, 0}, {1, 1, 0}, {1, 1, 1}});                        // 0
   int result4 = solution.minSwaps(*new vector<vector<int>>{{1, 0, 0, 0}, {1, 1, 1, 1}, {1, 0, 0, 0}, {1, 0, 0, 0}}); // 2
   int result5 = solution.minSwaps(*new vector<vector<int>>{
-      {
-          1,
-          0,
-          0,
-          0,
-          0,
-      },
+      {1, 0, 0, 0, 0, 0},
       {0, 0, 0, 1, 0, 0},
       {0, 0, 0, 1, 0, 0},
       {0, 0, 1, 0, 0, 0},
