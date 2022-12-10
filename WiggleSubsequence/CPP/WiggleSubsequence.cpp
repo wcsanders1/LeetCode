@@ -15,26 +15,19 @@ class Solution
 public:
   int wiggleMaxLength(vector<int> &nums)
   {
-    int answer = 0;
-    vector<vector<int>> dp(nums.size(), vector<int>(3, 0));
-    for (int i = 0; i < nums.size(); i++)
+    Diff curDiff = Equal;
+    int answer = 1;
+    for (int i = 1; i < nums.size(); i++)
     {
-      dp[i][0] = nums[i];
-      for (int j = 0; j < i; j++)
+      Diff nextDiff = getDiff(nums[i - 1], nums[i]);
+      if (nextDiff != Equal && nextDiff != curDiff)
       {
-        Diff lastDiff = (Diff)dp[j][1];
-        Diff curDiff = getDiff(nums[i], dp[j][0]);
-        dp[j][0] = nums[i];
-
-        if (curDiff != Equal && lastDiff != curDiff)
-        {
-          dp[j][1] = curDiff;
-          answer = max(answer, ++dp[j][2]);
-        }
+        curDiff = nextDiff;
+        answer++;
       }
     }
 
-    return answer + 1;
+    return answer;
   }
 
 private:
