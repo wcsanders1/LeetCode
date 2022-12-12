@@ -1,6 +1,7 @@
 // https://leetcode.com/problems/recover-binary-search-tree/description/
 #include <queue>
 #include <vector>
+#include <set>
 
 using namespace std;
 
@@ -14,94 +15,64 @@ struct TreeNode
   TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
 
+auto cmp = [](TreeNode *n1, TreeNode *n2)
+{
+  return n1->val > n2->val;
+};
+
 class Solution
 {
 public:
   void recoverTree(TreeNode *root)
   {
-    vector<TreeNode *> mismatches;
-    queue<TreeNode *> q;
-    q.push(root);
-    while (!q.empty())
-    {
-      int count = q.size();
 
-      while (count-- > 0)
-      {
-        TreeNode *current = q.front();
-        q.pop();
+    set<TreeNode *, decltype(cmp)> mismatches(cmp);
+    vector<TreeNode *> lessers;
+    vector<TreeNode *> greaters;
 
-        TreeNode *left = checkMax(current->left, current->val);
-        TreeNode *right = checkMin(current->right, current->val);
+    getMismatches(root, greaters, lessers, mismatches);
 
-        if (left != nullptr)
-        {
-          mismatches.push_back(left);
-          mismatches.push_back(current);
-        }
-        else if (current->left != nullptr)
-        {
-          q.emplace(current->left);
-        }
+    TreeNode *m1 = *mismatches.begin();
+    TreeNode *m2 = *mismatches.rbegin();
 
-        if (right != nullptr)
-        {
-          mismatches.push_back(current);
-          mismatches.push_back(right);
-        }
-        else if (current->right != nullptr)
-        {
-          q.emplace(current->right);
-        }
-      }
-    }
-
-    int t = mismatches[0]->val;
-    mismatches[0]->val = mismatches[mismatches.size() - 1]->val;
-    mismatches[mismatches.size() - 1]->val = t;
+    int t = m1->val;
+    m1->val = m2->val;
+    m2->val = t;
   }
 
 private:
-  TreeNode *checkMax(TreeNode *node, int max, TreeNode *target = nullptr)
+  void getMismatches(TreeNode *node, vector<TreeNode *> &greaters, vector<TreeNode *> &lessers, set<TreeNode *, decltype(cmp)> &mismatches)
   {
     if (node == nullptr)
     {
-      return target;
+      return;
     }
 
-    if (node->val > max)
+    for (TreeNode *g : greaters)
     {
-      target = node;
+      if (node->val > g->val)
+      {
+        mismatches.insert(node);
+        mismatches.insert(g);
+      }
     }
 
-    TreeNode *left = checkMax(node->left, max, target);
-    if (left != nullptr)
+    for (TreeNode *l : lessers)
     {
-      target = left;
+      if (node->val < l->val)
+      {
+        mismatches.insert(node);
+        mismatches.insert(l);
+      }
     }
 
-    return checkMax(node->right, max, target);
-  }
+    greaters.push_back(node);
+    getMismatches(node->left, greaters, lessers, mismatches);
+    greaters.pop_back();
 
-  TreeNode *checkMin(TreeNode *node, int min, TreeNode *target = nullptr)
-  {
-    if (node == nullptr)
-    {
-      return target;
-    }
-
-    if (node->val < min)
-    {
-      target = node;
-    }
-
-    TreeNode *left = checkMin(node->left, min, target);
-    if (left != nullptr)
-    {
-      target = left;
-    }
-
-    return checkMin(node->right, min, target);
+    lessers.push_back(node);
+    getMismatches(node->right, greaters, lessers, mismatches);
+    lessers.pop_back();
   }
 };
 
