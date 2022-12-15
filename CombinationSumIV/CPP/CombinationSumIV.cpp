@@ -12,26 +12,29 @@ public:
     sort(nums.begin(), nums.end());
     vector<int> dp(1001, 0);
 
-    for (int i = 0; i < nums.size(); i++)
+    if (nums[nums.size() - 1] < target)
+    {
+      nums.push_back(target);
+    }
+
+    dp[nums[0]] = 1;
+    for (int i = 1; i < nums.size(); i++)
     {
       int num = nums[i];
       dp[num] = 1;
 
+      vector<bool> visited(1001, false);
+
       for (int j = i - 1; j >= 0; j--)
       {
-        int div = num / nums[j];
         int res = num % nums[j];
-        dp[num] += dp[div] + dp[res];
-      }
-    }
+        int a = visited[nums[j]] ? 0 : dp[nums[j]];
+        int b = visited[res] ? 0 : dp[res];
 
-    if (target > nums[nums.size() - 1])
-    {
-      for (int j = nums.size() - 1; j >= 0; j--)
-      {
-        int div = target / nums[j];
-        int res = target % nums[j];
-        dp[target] += dp[div] + dp[res];
+        dp[num] += a + b;
+
+        visited[nums[j]] = true;
+        visited[res] = true;
       }
     }
 
