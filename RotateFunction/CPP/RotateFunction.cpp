@@ -1,4 +1,5 @@
 // https://leetcode.com/problems/rotate-function/
+// NOT MINE: https://leetcode.com/problems/rotate-function/solutions/87842/java-solution-o-n-with-non-mathametical-explaination/?orderBy=most_votes
 #include <vector>
 
 using namespace std;
@@ -8,16 +9,18 @@ class Solution
 public:
   int maxRotateFunction(vector<int> &nums)
   {
-    int answer = INT32_MIN;
+    int answer = 0;
+    int sum = 0;
     for (int i = 0; i < nums.size(); i++)
     {
-      int t = 0;
-      for (int j = 0; j < nums.size(); j++)
-      {
-        int n = j + i >= nums.size() ? j + i - nums.size() : j + i;
-        t += nums[n] * j;
-      }
+      sum += nums[i];
+      answer += nums[i] * i;
+    }
 
+    int t = answer;
+    for (int i = nums.size() - 1; i > 0; i--)
+    {
+      t = t + sum - nums[i] * nums.size();
       answer = max(answer, t);
     }
 
