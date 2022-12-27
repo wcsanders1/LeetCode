@@ -1,6 +1,5 @@
 // https://leetcode.com/problems/arithmetic-slices/description/
 #include <vector>
-#include <cstdlib>
 
 using namespace std;
 
@@ -14,7 +13,7 @@ public:
             return 0;
         }
 
-        int diff = abs(nums[0] - nums[1]);
+        int diff = nums[0] - nums[1];
         int start = 0;
         int end = 2;
         int answer = 0;
@@ -24,7 +23,7 @@ public:
         {
             int p = 2;
             int increase = 1;
-            while (end < nums.size() && abs(nums[t] - nums[end]) == diff)
+            while (end < nums.size() && nums[t] - nums[end] == diff)
             {
                 if (end - start > 2)
                 {
@@ -42,7 +41,7 @@ public:
             start = t;
             if (end < nums.size())
             {
-                diff = abs(nums[t] - nums[end]);
+                diff = nums[t] - nums[end];
             }
         }
 
@@ -59,9 +58,3 @@ int main()
     int result3 = solution.numberOfArithmeticSlices(*new vector<int>{1, 2, 3, 4, 6, 8, 10});
     int result4 = solution.numberOfArithmeticSlices(*new vector<int>{1, 3, 5, 7, 9, 11, 12});
 }
-
-// 1, 2, 3 -- 1
-// 1, 2, 3, 4 -- 3
-// 1, 2, 3, 4, 5 -- 6
-// 1, 2, 3, 4, 5, 6 -- 10
-// 1, 2, 3, 4, 5, 6, 7 -- 15
