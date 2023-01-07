@@ -16,30 +16,45 @@ public:
   double champagneTower(int poured, int query_row, int query_glass)
   {
     vector<Glass> glasses;
-    glasses.push_back(Glass(1, poured-- > 0 ? 1 : 0));
+    vector<int> rowStart;
+    glasses.push_back(Glass(1, 0));
     int start = 0;
-    int end = 0;
+    int rowSize = 1;
+    int rows = query_row;
 
-    while (--query_row > 0)
+    while (rows-- >= 0)
     {
-      int newRow = (end - start) + 1;
-      for (int i = 0; i < newRow; i++)
+      rowStart.push_back(start);
+      for (int i = 0; i <= rowSize; i++)
       {
-        double increaseInterval = 0;
-        double fullness = 0;
-        if (i == 0 || i == newRow - 1)
-        {
-          increaseInterval = glasses[start].increaseInterval / 2;
-          fullness = poured-- > 0 && glasses[start].fullness == 1 ? increaseInterval : 0;
-        }
-        else
-        {
-        }
-        glasses.push_back(Glass(increaseInterval, fullness));
-      }
+        double increaseInterval = (i == 0 || i == rowSize)
+                                      ? glasses[start].increaseInterval / 2
+                                      : glasses[start].increaseInterval;
 
-      start = end + 1;
-      end += newRow;
+        glasses.push_back(Glass(increaseInterval, 0));
+      }
+      start += ++rowSize;
     }
+
+    while (poured-- > 0)
+    {
+      double glass = 1;
+      while (glass > 0)
+      {
+      }
+    }
+
+    int index = rowStart[query_row] + (query_glass - 1);
+
+    return glasses[index].fullness;
   }
 };
+
+int main()
+{
+  Solution solution;
+
+  // double result1 = solution.champagneTower(1, 1, 1);
+  // double result2 = solution.champagneTower(2, 1, 1);
+  double result3 = solution.champagneTower(100000009, 33, 17);
+}
