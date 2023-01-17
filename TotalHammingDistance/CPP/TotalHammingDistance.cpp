@@ -16,7 +16,7 @@ public:
       for (int i = 0; i < bitCount; i++)
       {
         counts[i][n & 1]++;
-        n = n >> 1;
+        n >>= 1;
       }
     }
 
