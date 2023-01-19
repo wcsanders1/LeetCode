@@ -16,32 +16,49 @@ public:
     }
 
     int start = 0;
-    int end = 1;
+    int end = 0;
     int cur = nums[0];
-    int iterations = 0;
+    nums.insert(nums.end(), nums.begin(), nums.end());
 
-    while (iterations++ <= n * 2)
+    while (end < nums.size())
     {
-      if (nums[end] + cur <= 0)
+      while (end - start >= n - 1)
       {
-        end = (end + 1) % n;
-        start = end;
-        cur = nums[end];
-        answer = max(answer, cur);
+        cur -= nums[start++];
       }
-      else if (iterations >= n)
+      answer = max(answer, cur);
+
+      while (nums[start] <= 0 && end < nums.size())
       {
-        while (start <= end)
+        cur -= nums[start++];
+        if (start > end)
         {
-          cur -= nums[start++];
+          if (end >= nums.size() - 1)
+          {
+            break;
+          }
+          cur += nums[++end];
+          answer = max(answer, cur);
+        }
+      }
+
+      if (end < nums.size() - 1)
+      {
+        end++;
+        if (nums[end] >= cur + nums[end])
+        {
+          cur = nums[end];
+          start = end;
+        }
+        else
+        {
+          cur += nums[end];
         }
         answer = max(answer, cur);
       }
       else
       {
-        cur += nums[end];
-        answer = max(answer, cur);
-        end = (end + 1) % n;
+        end++;
       }
     }
 
@@ -53,7 +70,10 @@ int main()
 {
   Solution solution;
 
-  int result1 = solution.maxSubarraySumCircular(*new vector<int>{1, -2, 3, -2}); // 3
-  int result2 = solution.maxSubarraySumCircular(*new vector<int>{5, -3, 5});     // 10
-  int result3 = solution.maxSubarraySumCircular(*new vector<int>{-3, -2, -3});   // -2
+  int result1 = solution.maxSubarraySumCircular(*new vector<int>{1, -2, 3, -2});              // 3
+  int result2 = solution.maxSubarraySumCircular(*new vector<int>{5, -3, 5});                  // 10
+  int result3 = solution.maxSubarraySumCircular(*new vector<int>{-3, -2, -3});                // -2
+  int result4 = solution.maxSubarraySumCircular(*new vector<int>{2, 2});                      // 4
+  int result5 = solution.maxSubarraySumCircular(*new vector<int>{2});                         // 2
+  int result6 = solution.maxSubarraySumCircular(*new vector<int>{0, 5, 8, -9, 9, -7, 3, -2}); // 16
 }
