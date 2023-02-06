@@ -1,5 +1,5 @@
+// https://leetcode.com/problems/count-vowel-strings-in-ranges/
 #include <vector>
-#include <algorithm>
 #include <string>
 
 using namespace std;
