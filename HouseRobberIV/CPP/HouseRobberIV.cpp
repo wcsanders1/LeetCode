@@ -1,4 +1,5 @@
-// 6346
+// https://leetcode.com/problems/house-robber-iv/
+// NOT MINE: https://leetcode.com/problems/house-robber-iv/solutions/3143697/java-c-python-binary-search-o-1-space/?orderBy=most_votes
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -10,23 +11,41 @@ class Solution
 public:
   int minCapability(vector<int> &nums, int k)
   {
-    if (nums.size() == 1)
+    int left = 1;
+    int right = 1e9;
+
+    while (left < right)
     {
-      return nums[0];
+      int mid = (left + right) / 2;
+      int take = 0;
+
+      for (int i = 0; i < nums.size(); i++)
+      {
+        if (nums[i] <= mid)
+        {
+          take++;
+          i++;
+        }
+      }
+
+      if (take >= k)
+      {
+        right = mid;
+      }
+      else
+      {
+        left = mid + 1;
+      }
     }
 
-    vector<int> best(nums.size(), 0);
-    best[nums.size() - 1] = nums[nums.size() - 1];
-    best[nums.size() - 2] = nums[nums.size() - 2];
-    for (int i = nums.size() - 3; i >= 0; i--)
-    {
-      int t = INT32_MAX;
-      for (int j = i + 2; j < nums.size(); j++)
-      {
-        int m = max(nums[i], nums[j]);
-        t = min(t, m);
-      }
-      best[i] = t;
-    }
+    return left;
   }
 };
+
+int main()
+{
+  Solution solution;
+
+  int result1 = solution.minCapability(*new vector<int>{2, 3, 5, 9}, 2);
+  int result2 = solution.minCapability(*new vector<int>{2, 7, 9, 3, 1}, 2);
+}
