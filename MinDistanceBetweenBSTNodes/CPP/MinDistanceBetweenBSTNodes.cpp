@@ -20,43 +20,34 @@ class Solution
 public:
   int minDiffInBST(TreeNode *root)
   {
-    queue<TreeNode *> q;
-    priority_queue<int> pq;
-    q.push(root);
-
-    while (!q.empty())
-    {
-      int n = q.size();
-      while (n-- > 0)
-      {
-        auto node = q.front();
-        q.pop();
-        pq.push(node->val);
-
-        if (node->left != nullptr)
-        {
-          q.push(node->left);
-        }
-
-        if (node->right != nullptr)
-        {
-          q.push(node->right);
-        }
-      }
-    }
-
-    int answer = INT32_MAX;
-    int last = pq.top();
-    pq.pop();
-    while (!pq.empty())
-    {
-      auto next = pq.top();
-      pq.pop();
-      answer = min(answer, abs(last - next));
-      last = next;
-    }
+    answer = INT32_MAX;
+    pre = -1;
+    traverseInOrder(root);
 
     return answer;
+  }
+
+private:
+  int answer = INT32_MAX;
+  int pre = -1;
+  void traverseInOrder(TreeNode *node)
+  {
+    if (node->left != nullptr)
+    {
+      traverseInOrder(node->left);
+    }
+
+    if (pre != -1)
+    {
+      answer = min(answer, abs(pre - node->val));
+    }
+
+    pre = node->val;
+
+    if (node->right != nullptr)
+    {
+      traverseInOrder(node->right);
+    }
   }
 };
 
@@ -69,4 +60,18 @@ int main()
                    new TreeNode(2,
                                 new TreeNode(1), new TreeNode(3)),
                    new TreeNode(6)));
+
+  int result2 = solution.minDiffInBST(
+      new TreeNode(90,
+                   new TreeNode(69,
+                                new TreeNode(49, nullptr, new TreeNode(52)),
+                                new TreeNode(89)),
+                   nullptr));
+
+  int result3 = solution.minDiffInBST(
+      new TreeNode(96,
+                   new TreeNode(12, nullptr,
+                                new TreeNode(13, nullptr,
+                                             new TreeNode(52, new TreeNode(29), nullptr))),
+                   nullptr));
 }
