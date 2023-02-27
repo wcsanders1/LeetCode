@@ -63,10 +63,12 @@ private:
       return new Node(grid[startRow - 1][startCol - 1], true);
     }
 
-    Node *topLeft = construct(grid, startRow, endRow / 2, startCol, endCol / 2);
-    Node *topRight = construct(grid, startRow, endRow / 2, (endCol + startCol) / 2, endCol);
-    Node *bottomLeft = construct(grid, endRow / 2, endRow, startCol, endCol / 2);
-    Node *bottomRight = construct(grid, endRow / 2, endRow, endCol / 2, endCol);
+    int midCol = (startCol + endCol) / 2;
+    int midRow = (startRow + endRow) / 2;
+    Node *topLeft = construct(grid, startRow, midRow, startCol, midCol);
+    Node *topRight = construct(grid, startRow, midRow, midCol + 1, endCol);
+    Node *bottomLeft = construct(grid, midRow + 1, endRow, startCol, midCol);
+    Node *bottomRight = construct(grid, midRow + 1, endRow, midCol + 1, endCol);
 
     if (topLeft->isLeaf && topRight->isLeaf && bottomLeft->isLeaf && bottomRight->isLeaf &&
         ((topLeft->val == topRight->val) && (topRight->val == bottomLeft->val) && (bottomLeft->val == bottomRight->val)))
@@ -82,7 +84,7 @@ int main()
 {
   Solution solution;
 
-  // auto result1 = solution.construct(*new vector<vector<int>>{{0, 1}, {1, 0}});
+  auto result1 = solution.construct(*new vector<vector<int>>{{0, 1}, {1, 0}});
   auto result2 = solution.construct(*new vector<vector<int>>{
       {1, 1, 1, 1, 0, 0, 0, 0},
       {1, 1, 1, 1, 0, 0, 0, 0},
