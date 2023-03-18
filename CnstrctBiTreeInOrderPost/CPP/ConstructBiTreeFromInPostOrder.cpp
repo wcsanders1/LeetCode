@@ -37,14 +37,16 @@ private:
       return new TreeNode(inorder[ileft]);
     }
 
-    int mid = ileft;
-    while (inorder[mid] != postorder[pright])
+    int imid = ileft;
+    while (inorder[imid] != postorder[pright])
     {
-      mid++;
+      imid++;
     }
 
-    auto leftNode = buildTree(inorder, postorder, ileft, mid - 1, pleft, pleft + mid - ileft - 1);
-    auto rightNode = buildTree(inorder, postorder, mid + 1, iright, pleft + mid - ileft, pright - 1);
+    int pmid = pleft + imid - ileft;
+
+    auto leftNode = buildTree(inorder, postorder, ileft, imid - 1, pleft, pmid - 1);
+    auto rightNode = buildTree(inorder, postorder, imid + 1, iright, pmid, pright - 1);
 
     return new TreeNode(postorder[pright], leftNode, rightNode);
   }
