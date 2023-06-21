@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_set>
 #include <queue>
+#include <unordered_map>
 
 using namespace std;
 
@@ -11,19 +12,50 @@ public:
   long long minCost(vector<int> &nums, vector<int> &cost)
   {
     int n = nums.size();
-    long long answer = INT64_MAX;
+    vector<pair<int, int>> pairs;
     for (int i = 0; i < n; i++)
     {
-      int curNum = nums[i];
-      long long curTotal = 0;
+      pairs.push_back({nums[i], cost[i]});
+    }
 
-      for (int j = 0; j < n; j++)
+    sort(pairs.begin(), pairs.end());
+    long long answer = INT64_MAX;
+    int mid = n / 2;
+
+    int start = mid;
+    while (start >= 0)
+    {
+      int target = pairs[start].first;
+      long long cur = 0;
+      for (int i = 0; i < n; i++)
       {
-        long long diff = abs(nums[j] - curNum);
-        curTotal += diff * cost[j];
+        long long diff = abs(target - pairs[i].first);
+        cur += diff * pairs[i].second;
       }
+      if (cur > answer)
+      {
+        break;
+      }
+      start--;
+      answer = cur;
+    }
 
-      answer = min(answer, curTotal);
+    start = mid + 1;
+    while (start < n)
+    {
+      int target = pairs[start].first;
+      long long cur = 0;
+      for (int i = 0; i < n; i++)
+      {
+        long long diff = abs(target - pairs[i].first);
+        cur += diff * pairs[i].second;
+      }
+      if (cur > answer)
+      {
+        break;
+      }
+      start++;
+      answer = cur;
     }
 
     return answer;
