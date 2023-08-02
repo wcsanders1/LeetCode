@@ -15,46 +15,40 @@ public:
       return 1;
     }
 
-    vector<vector<double>> cache(n, vector<double>(n, -1));
-    auto onBoard = getTimesOnBoard(k, row, column, n, cache);
+    vector<vector<vector<double>>> dp(k + 1, vector<vector<double>>(n, vector<double>(n, 0)));
+    for (int r = 0; r < n; r++)
+    {
+      for (int c = 0; c < n; c++)
+      {
+        dp[0][r][c] = 1;
+      }
+    }
 
-    return onBoard / pow(8.0, k);
+    for (int m = 1; m <= k; m++)
+    {
+      for (int r = 0; r < n; r++)
+      {
+        for (int c = 0; c < n; c++)
+        {
+          for (auto &d : directions)
+          {
+            int nR = r + d[0];
+            int nC = c + d[1];
+            if (isOnBoard(nR, nC, n))
+            {
+              dp[m][r][c] += dp[m - 1][nR][nC];
+            }
+          }
+        }
+      }
+    }
+
+    return dp[k][row][column] / pow(8.0, k);
   }
 
 private:
   vector<vector<int>> directions =
       {{-2, 1}, {-1, 2}, {1, 2}, {2, 1}, {2, -1}, {1, -2}, {-1, -2}, {-2, -1}};
-
-  double getTimesOnBoard(int k, int row, int column, int n, vector<vector<double>> &cache)
-  {
-    if (cache[row][column] != -1)
-    {
-      return cache[row][column];
-    }
-
-    if (k == 0)
-    {
-      cache[row][column] = 1;
-      return 1;
-    }
-
-    double onBoard = 0;
-    for (auto &d : directions)
-    {
-      int newRow = row + d[0];
-      int newColumn = column + d[1];
-      if (!isOnBoard(newRow, newColumn, n))
-      {
-        continue;
-      }
-
-      auto t = getTimesOnBoard(k - 1, row + d[0], column + d[1], n, cache);
-      onBoard += t;
-    }
-
-    cache[row][column] = onBoard;
-    return onBoard;
-  }
 
   bool isOnBoard(int row, int column, int n)
   {
@@ -69,4 +63,5 @@ int main()
   auto result1 = solution.knightProbability(3, 2, 0, 0);
   auto result2 = solution.knightProbability(1, 0, 0, 0);
   auto result3 = solution.knightProbability(8, 30, 6, 4);
+  auto result4 = solution.knightProbability(3, 3, 0, 0); // .01562
 }
