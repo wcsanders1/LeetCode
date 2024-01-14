@@ -75,13 +75,6 @@ private:
 
     if (jobs[mid].startTime == endTime)
     {
-      // while (--mid >= 0)
-      // {
-      //   if (jobs[mid].startTime < endTime)
-      //   {
-      //     return mid + 1;
-      //   }
-      // }
       return mid;
     }
 
@@ -94,8 +87,8 @@ int main()
 {
   Solution solution;
 
-  // int result1 = solution.jobScheduling(*new vector<int>{1, 2, 3, 3}, *new vector<int>{3, 4, 5, 6}, *new vector<int>{50, 10, 40, 70});             // 120
-  // int result2 = solution.jobScheduling(*new vector<int>{1, 2, 3, 4, 6}, *new vector<int>{3, 5, 10, 6, 9}, *new vector<int>{20, 20, 100, 70, 60}); // 150
-  // int result3 = solution.jobScheduling(*new vector<int>{1, 1, 1}, *new vector<int>{2, 3, 4}, *new vector<int>{5, 6, 4});
+  int result1 = solution.jobScheduling(*new vector<int>{1, 2, 3, 3}, *new vector<int>{3, 4, 5, 6}, *new vector<int>{50, 10, 40, 70});             // 120
+  int result2 = solution.jobScheduling(*new vector<int>{1, 2, 3, 4, 6}, *new vector<int>{3, 5, 10, 6, 9}, *new vector<int>{20, 20, 100, 70, 60}); // 150
+  int result3 = solution.jobScheduling(*new vector<int>{1, 1, 1}, *new vector<int>{2, 3, 4}, *new vector<int>{5, 6, 4});
   int result4 = solution.jobScheduling(*new vector<int>{4, 2, 4, 8, 2}, *new vector<int>{5, 5, 5, 10, 8}, *new vector<int>{1, 2, 8, 10, 4}); // 18
 }
