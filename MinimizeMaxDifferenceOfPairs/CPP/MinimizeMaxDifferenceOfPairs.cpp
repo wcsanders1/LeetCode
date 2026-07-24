@@ -10,42 +10,34 @@ class Solution
 public:
   int minimizeMax(vector<int> &nums, int p)
   {
-    vector<pair<int, int>> pos;
-    for (int i = 0; i < nums.size(); i++)
+    int n = nums.size();
+    sort(nums.begin(), nums.end());
+    int start = 0;
+    int end = nums[n - 1] - nums[0];
+
+    return getMax(nums, p, start, end);
+  }
+
+private:
+  int getMax(vector<int> &nums, int p, int start, int end)
+  {
+    if (start > end)
     {
-      pos.push_back({nums[i], i});
+      return start;
     }
 
-    sort(pos.begin(), pos.end());
-
-    priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> diffs;
-    for (int i = 0; i < pos.size(); i++)
+    int mid = (end + start) / 2;
+    int count = 0;
+    for (int i = 0; i < nums.size() - 1; i++)
     {
-      for (int j = i + 1; j < pos.size(); j++)
+      if (nums[i + 1] - nums[i] <= mid)
       {
-        diffs.push({pos[j].first - pos[i].first, pos[i].second, pos[j].second});
+        count++;
+        i++;
       }
     }
 
-    vector<bool> visited(nums.size(), false);
-    int answer = 0;
-    while (p > 0 && !diffs.empty())
-    {
-      auto t = diffs.top();
-      diffs.pop();
-      if (visited[t[1]] || visited[t[2]])
-      {
-        continue;
-      }
-
-      p--;
-      visited[t[1]] = true;
-      visited[t[2]] = true;
-
-      answer = max(answer, t[0]);
-    }
-
-    return answer;
+    return count >= p ? getMax(nums, p, start, mid - 1) : getMax(nums, p, mid + 1, end);
   }
 };
 
