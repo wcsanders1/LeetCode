@@ -19,22 +19,37 @@ public:
 
   void add(int num)
   {
-    nums.push_back(num);
+    if (num == 0)
+    {
+      pre.clear();
+    }
+    else if (pre.size() == 0)
+    {
+      pre.push_back(num);
+    }
+    else
+    {
+      pre.push_back(num * pre[pre.size() - 1]);
+    }
   }
 
   int getProduct(int k)
   {
-    int product = nums[nums.size() - 1];
-    for (int i = 1; i < k; i++)
+    if (k > pre.size())
     {
-      product *= nums[nums.size() - 1 - i];
+      return 0;
     }
 
-    return product;
+    if (k == pre.size())
+    {
+      return pre[pre.size() - 1];
+    }
+
+    return pre[pre.size() - 1] / pre[pre.size() - k - 1];
   }
 
 private:
-  vector<int> nums;
+  vector<int> pre;
 };
 
 int main()
